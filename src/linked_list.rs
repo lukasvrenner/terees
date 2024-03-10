@@ -9,6 +9,10 @@ impl<T: PartialEq> LinkedList<T> {
     pub fn new() -> LinkedList<T> {
         LinkedList(None)
     }
+
+    pub fn next(&self) -> Option<&LinkedList<T>> {
+        Some(self.0.as_ref()?.1.as_ref())
+    }
 }
 
 impl<T: PartialEq> Tree for LinkedList<T> {
