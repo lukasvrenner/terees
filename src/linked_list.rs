@@ -1,3 +1,4 @@
+
 use crate::Tree;
 
 #[derive(Debug)]
@@ -16,6 +17,10 @@ impl<T: PartialEq> LinkedList<T> {
 
     pub fn next(&self) -> Option<&LinkedList<T>> {
         Some(self.0.as_ref()?.next.as_ref())
+    }
+
+    pub fn next_mut(&mut self) -> Option<&mut LinkedList<T>> {
+        Some(self.0.as_mut()?.next.as_mut())
     }
 }
 
@@ -36,10 +41,29 @@ impl<T: PartialEq> Tree for LinkedList<T> {
         if self.0.is_none() {
             return None;
         }
-        self.0.as_ref()?.next.find(key)
+        self.next()?.find(key)
     }
 
-    fn delete(&self, key: Self::Item) {
+    fn find_mut(&mut self, key: Self::Item) -> Option<&mut Self> {
+        if self.0.as_ref().is_some_and(|unwrapped| unwrapped.key == key) {
+            return Some(self);
+        }
+        if self.0.is_none() {
+            return None;
+        }
+        self.next_mut()?.find_mut(key)
+    }
+
+    fn delete(&mut self, key: Self::Item) {
+        self.find_mut(key).map(|node| node.drop());
+    }
+
+    fn drop(&mut self) {
+        todo!();
+    }
+
+    /// appends 'other' to 'self'
+    fn concat(&mut self, other: Self) {
         todo!()
     }
 }

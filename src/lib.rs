@@ -6,9 +6,19 @@ pub trait Tree {
     fn add(&mut self, key: Self::Item);
 
     /// deletes 'key' from 'self'
-    fn delete(&self, key: Self::Item);
+    fn delete(&mut self, key: Self::Item);
 
-    /// returns the optional subtree containing `key`
+    /// returns an optional immutable reference to thesubtree containing `key`
     fn find(&self, key: Self::Item) -> Option<&Self>;
+
+    /// returns an optional mutable reference to the subtree containing 'key'
+    fn find_mut(&mut self, key: Self::Item) -> Option<&mut Self>;
+
+    /// removes 'self' from tree
+    fn drop(&mut self);
+
+    /// concatenates trees
+    /// might not ensure the order is the same
+    fn concat(&mut self, other: Self);
 }
 
