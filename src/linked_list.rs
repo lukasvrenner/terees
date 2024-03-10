@@ -59,7 +59,7 @@ impl<T: PartialEq> Tree for LinkedList<T> {
     }
 
     fn drop(&mut self) {
-        todo!();
+        self.0 = self.0.take().map(|node| node.next.0).flatten();
     }
 
     /// appends 'other' to 'self'
@@ -67,3 +67,15 @@ impl<T: PartialEq> Tree for LinkedList<T> {
         todo!()
     }
 }
+
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//
+//     #[test]
+//     fn add() {
+//         let mut linked_list = LinkedList::new();
+//         linked_list.add(5);
+//         assert_eq!(linked_list, LinkedList(Some(Node{key: 5, next: Box::new(LinkedList(None))})));
+//     }
+// }
