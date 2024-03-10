@@ -33,6 +33,9 @@ impl<T: PartialEq> Tree for LinkedList<T> {
         if self.0.as_ref().is_some_and(|unwrapped| unwrapped.key == key) {
             return Some(self);
         }
+        if self.0.is_none() {
+            return None;
+        }
         self.0.as_ref()?.next.find(key)
     }
 
