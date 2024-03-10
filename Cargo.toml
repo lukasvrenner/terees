@@ -1,0 +1,14 @@
+[package]
+name = "terees"
+license = "Apache-2.0"
+version = "0.1.0"
+edition = "2021"
+description = "a collection of tree-like data structures"
+readme = "README.md"
+repository = "https://github.com/lukasvrenner/terees"
+categories = ["data-structure"]
+keywords = ["tree", "data structure"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
