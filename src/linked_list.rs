@@ -17,10 +17,7 @@ impl<T: PartialEq> LinkedList<T> {
     pub fn push(&mut self, key: T) {
         match &mut self.next {
             Some(node) => node.push(key),
-            None => self.next = Some(Box::new(LinkedList {
-                key,
-                next: None,
-            })),
+            None => self.next = Some(Box::new(LinkedList { key, next: None })),
         }
     }
 }
@@ -28,7 +25,7 @@ impl<T: PartialEq> LinkedList<T> {
 impl<T: PartialEq> Tree for LinkedList<T> {
     type Item = T;
 
-    /// adds 'key' to the beginning of 'self'
+    /// adds `key` to the beginning of `self`
     /// because it adds to the beginning, it has O(1) time complexity
     fn add(&mut self, key: Self::Item) {
         let mut new_head = LinkedList { key, next: None };
@@ -50,10 +47,8 @@ impl<T: PartialEq> Tree for LinkedList<T> {
         self.next.as_deref_mut()?.find_mut(key)
     }
 
-    /// removes `self` from the list
-    /// does *not* remove sub-elements
-    fn drop(&mut self) {
-        todo!();
+    fn remove(&mut self, key: Self::Item) {
+        todo!()
     }
 
     /// concatenates `self` and `other`
