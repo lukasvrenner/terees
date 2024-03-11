@@ -18,10 +18,7 @@ impl<T: PartialEq> Tree for LinkedList<T> {
     /// adds 'key' to the beginning of 'self'
     /// because it adds to the beginning, it has O(1) time complexity
     fn add(&mut self, key: Self::Item) {
-        let mut new_head = LinkedList {
-            key,
-            next: None,
-        };
+        let mut new_head = LinkedList { key, next: None };
         std::mem::swap(self, &mut new_head);
         self.next = Some(Box::new(new_head));
     }

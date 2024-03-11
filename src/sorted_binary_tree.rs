@@ -25,36 +25,28 @@ impl<T: PartialOrd> Tree for SortedBinaryTree<T> {
         // check left branch
         if self.key < key {
             match &mut self.left {
-                Some(ref mut tree) => return tree.add(key),
+                Some(ref mut tree) => tree.add(key),
                 None => {
                     self.left = Some(Box::new(SortedBinaryTree {
                         key,
                         left: None,
                         right: None,
                     }));
-                    return;
                 }
             }
-        }
-        // check right branch
-        if self.key >= key {
+        } else {
+            // right branch
             match &mut self.right {
-                Some(ref mut tree) => return tree.add(key),
+                Some(ref mut tree) => tree.add(key),
                 None => {
                     self.right = Some(Box::new(SortedBinaryTree {
                         key,
                         left: None,
                         right: None,
                     }));
-                    return;
                 }
             }
         }
-        *self = SortedBinaryTree {
-            key,
-            left: None,
-            right: None,
-        };
     }
 
     fn remove(&mut self, key: Self::Item) {
