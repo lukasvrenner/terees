@@ -2,15 +2,15 @@ use crate::Tree;
 
 /// keys on left branches are less than `self.key`, while values to the right
 /// are greater than or equal to `self.key`
-pub struct SortedBinaryTree<T: PartialOrd> {
+pub struct BSTree<T: PartialOrd> {
     key: T,
-    left: Option<Box<SortedBinaryTree<T>>>,
-    right: Option<Box<SortedBinaryTree<T>>>,
+    left: Option<Box<BSTree<T>>>,
+    right: Option<Box<BSTree<T>>>,
 }
 
-impl<T: PartialOrd> SortedBinaryTree<T> {
-    pub fn new(key: T) -> SortedBinaryTree<T> {
-        SortedBinaryTree {
+impl<T: PartialOrd> BSTree<T> {
+    pub fn new(key: T) -> BSTree<T> {
+        BSTree {
             key,
             left: None,
             right: None,
@@ -18,7 +18,7 @@ impl<T: PartialOrd> SortedBinaryTree<T> {
     }
 }
 
-impl<T: PartialOrd> Tree for SortedBinaryTree<T> {
+impl<T: PartialOrd> Tree for BSTree<T> {
     type Item = T;
 
     fn add(&mut self, key: Self::Item) {
@@ -27,7 +27,7 @@ impl<T: PartialOrd> Tree for SortedBinaryTree<T> {
             match &mut self.left {
                 Some(ref mut tree) => tree.add(key),
                 None => {
-                    self.left = Some(Box::new(SortedBinaryTree {
+                    self.left = Some(Box::new(BSTree {
                         key,
                         left: None,
                         right: None,
@@ -39,7 +39,7 @@ impl<T: PartialOrd> Tree for SortedBinaryTree<T> {
             match &mut self.right {
                 Some(ref mut tree) => tree.add(key),
                 None => {
-                    self.right = Some(Box::new(SortedBinaryTree {
+                    self.right = Some(Box::new(BSTree {
                         key,
                         left: None,
                         right: None,
