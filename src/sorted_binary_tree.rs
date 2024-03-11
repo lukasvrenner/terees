@@ -9,7 +9,7 @@ pub struct SortedBinaryTree<T: PartialOrd> {
 }
 
 impl<T: PartialOrd> SortedBinaryTree<T> {
-    fn new(key: T) -> SortedBinaryTree<T> {
+    pub fn new(key: T) -> SortedBinaryTree<T> {
         SortedBinaryTree {
             key,
             left: None,
