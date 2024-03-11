@@ -73,10 +73,6 @@ impl<T: PartialOrd> Tree for BSTree<T> {
         Some(self)
     }
 
-    fn drop(&mut self) {
-        todo!();
-    }
-
     fn concat(&mut self, other: Self) {
         todo!()
     }
