@@ -7,8 +7,21 @@ pub struct LinkedList<T: PartialEq> {
 }
 
 impl<T: PartialEq> LinkedList<T> {
+    /// creates a new `LinkedList`, with `key` as the key and
+    /// `None` as `next`
     pub fn new(key: T) -> LinkedList<T> {
         LinkedList { key, next: None }
+    }
+
+    /// appends a new node with key `key` to `self`
+    pub fn push(&mut self, key: T) {
+        match &mut self.next {
+            Some(node) => node.push(key),
+            None => self.next = Some(Box::new(LinkedList {
+                key,
+                next: None,
+            })),
+        }
     }
 }
 
