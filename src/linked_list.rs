@@ -1,6 +1,6 @@
 use crate::Tree;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct LinkedList<T: PartialEq> {
     key: T,
     next: Option<Box<LinkedList<T>>>,
@@ -14,11 +14,43 @@ impl<T: PartialEq> LinkedList<T> {
     }
 
     /// appends a new node with key `key` to `self`
-    pub fn push(&mut self, key: T) {
+    pub fn append(&mut self, key: T) {
         match &mut self.next {
-            Some(node) => node.push(key),
+            Some(node) => node.append(key),
             None => self.next = Some(Box::new(LinkedList { key, next: None })),
         }
+    }
+
+    /// returns an optional reference to the nth node
+    pub fn nth(&self, n: u8) -> Option<&Self> {
+        if n == 0 {
+            return Some(self);
+        }
+        match &self.next {
+            Some(node) => node.nth(n - 1),
+            None => None,
+        }
+    }
+
+    /// returns an optional mutable reference to the nth node
+    pub fn nth_mut(&mut self, n: u8) -> Option<&mut Self> {
+        if n == 0 {
+            return Some(self);
+        }
+        match &mut self.next {
+            Some(node) => node.nth_mut(n - 1),
+            None => None,
+        }
+    }
+
+    /// inserts a new node at index `index`
+    pub fn insert(&mut self, index: u8, key: T) {
+        todo!()
+    }
+
+    /// removes the last node, and returns its key
+    pub fn pop(&mut self) -> T {
+        todo!();
     }
 }
 
@@ -53,6 +85,9 @@ impl<T: PartialEq> Tree for LinkedList<T> {
 
     /// concatenates `self` and `other`
     fn concat(&mut self, other: Self) {
-        todo!();
+        match &mut self.next {
+            Some(node) => node.concat(other),
+            None => self.next = Some(Box::new(other)),
+        }
     }
 }
