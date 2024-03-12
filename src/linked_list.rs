@@ -22,7 +22,7 @@ impl<T: PartialEq> LinkedList<T> {
     }
 
     /// returns an optional reference to the nth node
-    pub fn nth(&self, n: u8) -> Option<&Self> {
+    pub fn nth(&self, n: usize) -> Option<&Self> {
         if n == 0 {
             return Some(self);
         }
@@ -33,7 +33,7 @@ impl<T: PartialEq> LinkedList<T> {
     }
 
     /// returns an optional mutable reference to the nth node
-    pub fn nth_mut(&mut self, n: u8) -> Option<&mut Self> {
+    pub fn nth_mut(&mut self, n: usize) -> Option<&mut Self> {
         if n == 0 {
             return Some(self);
         }
@@ -44,7 +44,7 @@ impl<T: PartialEq> LinkedList<T> {
     }
 
     /// inserts a new node at index `index`
-    pub fn insert(&mut self, index: u8, key: T) {
+    pub fn insert(&mut self, index: usize, key: T) {
         todo!()
     }
 
@@ -69,14 +69,20 @@ impl<T: PartialEq> Tree for LinkedList<T> {
         if self.key == key {
             return Some(self);
         }
-        self.next.as_deref()?.find(key)
+        match &self.next {
+            Some(node) => node.find(key),
+            None => None,
+        }
     }
 
     fn find_mut(&mut self, key: Self::Item) -> Option<&mut Self> {
         if self.key == key {
             return Some(self);
         }
-        self.next.as_deref_mut()?.find_mut(key)
+        match &mut self.next {
+            Some(node) => node.find_mut(key),
+            None => None,
+        }
     }
 
     fn remove(&mut self, key: Self::Item) {
