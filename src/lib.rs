@@ -1,5 +1,5 @@
-pub mod linked_list;
 pub mod binary_search_tree;
+pub mod linked_list;
 
 pub trait Tree {
     type Item;

@@ -49,13 +49,13 @@ impl<T: PartialEq> LinkedList<T> {
         if index == 0 {
             return self.add(key);
         }
-        self.nth_mut(index - 1).map(|node| {
+        if let Some(node) = self.nth_mut(index - 1) {
             let new_node = LinkedList {
                 key,
                 next: node.next.take(),
             };
             node.next = Some(Box::new(new_node));
-        });
+        }
     }
 
     /// removes the last node, and returns its key
@@ -65,7 +65,20 @@ impl<T: PartialEq> LinkedList<T> {
 
     /// truncates off all nodes after `index`
     pub fn trunc(&mut self, index: usize) {
-        self.nth_mut(index).map(|node| node.next = None);
+        if let Some(node) = self.nth_mut(index) {
+            node.next = None;
+        }
+    }
+
+    /// returns the number of nodes in `self`
+    pub fn length(&self) -> usize {
+        let mut length = 0;
+        todo!();
+    }
+
+    /// returns true if `self` contains a node that contains `key`
+    pub fn contains(&self, key: usize) -> bool {
+        todo!();
     }
 }
 
@@ -110,7 +123,7 @@ impl<T: PartialEq> Tree for LinkedList<T> {
                     node.remove(key);
                 }
             }
-            None => return,
+            None => (),
         }
     }
 
@@ -163,6 +176,5 @@ mod tests {
         linked_list.next.map(|node| {
             assert_eq!(node.key, 5);
         });
-        
     }
 }
