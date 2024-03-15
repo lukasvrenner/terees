@@ -45,12 +45,27 @@ impl<T: PartialEq> LinkedList<T> {
 
     /// inserts a new node at index `index`
     pub fn insert(&mut self, index: usize, key: T) {
-        todo!()
+        // there is no node before the first node
+        if index == 0 {
+            return self.add(key);
+        }
+        self.nth_mut(index - 1).map(|node| {
+            let new_node = LinkedList {
+                key,
+                next: node.next.take(),
+            };
+            node.next = Some(Box::new(new_node));
+        });
     }
 
     /// removes the last node, and returns its key
     pub fn pop(&mut self) -> T {
         todo!();
+    }
+
+    /// truncates off all nodes after `index`
+    pub fn trunc(&mut self, index: usize) {
+        self.nth_mut(index).map(|node| node.next = None);
     }
 }
 
@@ -86,7 +101,19 @@ impl<T: PartialEq> Tree for LinkedList<T> {
     }
 
     fn remove(&mut self, key: Self::Item) {
-        todo!()
+        // match &mut self.next {
+        //     Some(ref mut node) => {
+        //         if node.key == key {
+        //             std::mem::swap(&mut self.next, &mut node.next);
+        //             std::mem::drop(node);
+        //         }
+        //         else {
+        //             node.as_mut().remove(key);
+        //         }
+        //     },
+        //     None => return,
+        // }
+        todo!();
     }
 
     /// concatenates `self` and `other`

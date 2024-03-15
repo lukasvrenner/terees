@@ -10,10 +10,10 @@ pub trait Tree {
     /// removes the node containing `key` from `self`
     fn remove(&mut self, key: Self::Item);
 
-    /// returns an optional immutable reference to the subtree containing `key`
+    /// returns an optional reference to the node containing `key`
     fn find(&self, key: Self::Item) -> Option<&Self>;
 
-    /// returns an optional mutable reference to the subtree containing `key`
+    /// returns an optional mutable reference to the node containing `key`
     fn find_mut(&mut self, key: Self::Item) -> Option<&mut Self>;
 
     /// concatenates trees
