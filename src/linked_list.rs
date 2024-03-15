@@ -13,10 +13,10 @@ impl<T: PartialEq> LinkedList<T> {
         LinkedList { key, next: None }
     }
 
-    /// appends a new node with key `key` to `self`
-    pub fn append(&mut self, key: T) {
+    /// pushes a new node with key `key` to the end of `self`
+    pub fn push(&mut self, key: T) {
         match &mut self.next {
-            Some(node) => node.append(key),
+            Some(node) => node.push(key),
             None => self.next = Some(Box::new(LinkedList { key, next: None })),
         }
     }
@@ -100,13 +100,15 @@ impl<T: PartialEq> Tree for LinkedList<T> {
         }
     }
 
+    // TODO: properly handle if the node containing `key` is the first node
     fn remove(&mut self, key: Self::Item) {
         match &mut self.next {
             Some(node) => {
                 if node.key == key {
-                    return self.next = node.next.take();
+                    self.next = node.next.take();
+                } else {
+                    node.remove(key);
                 }
-                node.remove(key);
             }
             None => return,
         }
@@ -118,5 +120,49 @@ impl<T: PartialEq> Tree for LinkedList<T> {
             Some(node) => node.concat(other),
             None => self.next = Some(Box::new(other)),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn add() {
+        let mut linked_list = LinkedList::new(5);
+
+        linked_list.add(4);
+        assert_eq!(linked_list.key, 4);
+
+        linked_list.next.map(|node| {
+            assert_eq!(node.key, 5);
+        });
+    }
+
+    #[test]
+    fn push() {
+        let mut linked_list = LinkedList::new(5);
+        linked_list.push(4);
+
+        assert_eq!(linked_list.key, 5);
+
+        linked_list.next.map(|node| {
+            assert_eq!(node.key, 4);
+        });
+    }
+
+    #[test]
+    fn remove() {
+        let mut linked_list = LinkedList::new(5);
+        linked_list.add(4);
+        linked_list.add(3);
+        linked_list.remove(4);
+
+        assert_eq!(linked_list.key, 3);
+
+        linked_list.next.map(|node| {
+            assert_eq!(node.key, 5);
+        });
+        
     }
 }
