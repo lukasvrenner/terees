@@ -80,6 +80,24 @@ impl<T: PartialEq> LinkedList<T> {
     pub fn contains(&self, key: usize) -> bool {
         todo!();
     }
+
+    /// returns an optional reference to the key at index `index`
+    pub fn get(&self, index: usize) -> Option<&T> {
+        todo!();
+    }
+
+    /// returns an optional mutable reference to the key at index `index`
+    pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
+        todo!();
+    }
+
+    /// sets the key at index `index` to `key`
+    /// if the index is out of bounds, nothing happens
+    pub fn set(&mut self, index: usize, key: T) {
+        if let Some(node) = self.nth_mut(index) {
+            node.key = key;
+        }
+    }
 }
 
 impl<T: PartialEq> Tree for LinkedList<T> {
