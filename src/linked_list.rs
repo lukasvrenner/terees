@@ -21,24 +21,24 @@ impl<T: PartialEq> LinkedList<T> {
         }
     }
 
-    /// returns an optional reference to the nth node
-    pub fn nth(&self, n: usize) -> Option<&Self> {
+    /// returns an optional reference to the node at index `index`
+    pub fn at_index(&self, n: usize) -> Option<&Self> {
         if n == 0 {
             return Some(self);
         }
         match &self.next {
-            Some(node) => node.nth(n - 1),
+            Some(node) => node.at_index(n - 1),
             None => None,
         }
     }
 
-    /// returns an optional mutable reference to the nth node
-    pub fn nth_mut(&mut self, n: usize) -> Option<&mut Self> {
+    /// returns an optional mutable reference to node at index `index`
+    pub fn at_index_mut(&mut self, n: usize) -> Option<&mut Self> {
         if n == 0 {
             return Some(self);
         }
         match &mut self.next {
-            Some(node) => node.nth_mut(n - 1),
+            Some(node) => node.at_index_mut(n - 1),
             None => None,
         }
     }
@@ -49,7 +49,7 @@ impl<T: PartialEq> LinkedList<T> {
         if index == 0 {
             return self.add(key);
         }
-        if let Some(node) = self.nth_mut(index - 1) {
+        if let Some(node) = self.at_index_mut(index - 1) {
             let new_node = LinkedList {
                 key,
                 next: node.next.take(),
@@ -65,7 +65,7 @@ impl<T: PartialEq> LinkedList<T> {
 
     /// truncates off all nodes after `index`
     pub fn trunc(&mut self, index: usize) {
-        if let Some(node) = self.nth_mut(index) {
+        if let Some(node) = self.at_index_mut(index) {
             node.next = None;
         }
     }
@@ -96,7 +96,7 @@ impl<T: PartialEq> LinkedList<T> {
     /// sets the key at index `index` to `key`
     /// if the index is out of bounds, nothing happens
     pub fn set(&mut self, index: usize, key: T) {
-        if let Some(node) = self.nth_mut(index) {
+        if let Some(node) = self.at_index_mut(index) {
             node.key = key;
         }
     }
@@ -156,18 +156,24 @@ impl<T: PartialEq> Tree for LinkedList<T> {
     }
 
     fn contains(&self, key: Self::Item) -> bool {
+        if self.key == key {
+            return true;
+        }
         match &self.next {
             Some(node) => {
                 if node.key == key {
                     return true;
                 }
                 node.contains(key)
-            },
+            }
             None => false,
         }
     }
-
 }
+
+// TODO:
+// add tests for each function
+// properly handle empty lists -- so far, lists cannot be empty
 
 #[cfg(test)]
 mod tests {
@@ -217,5 +223,13 @@ mod tests {
         linked_list.add(4);
         linked_list.add(3);
         assert_eq!(linked_list.length(), 3);
+    }
+
+    #[test]
+    fn contains() {
+        let mut linked_list = LinkedList::new("hello");
+        linked_list.add("world");
+
+        assert!(linked_list.contains("world"));
     }
 }
