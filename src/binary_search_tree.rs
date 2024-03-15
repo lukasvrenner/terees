@@ -55,20 +55,32 @@ impl<T: PartialOrd> Tree for BSTree<T> {
 
     fn find(&self, key: Self::Item) -> Option<&Self> {
         if self.key < key {
-            return self.left.as_deref()?.find(key);
+            match &self.left {
+                Some(node) => return node.find(key),
+                None => return None,
+            }
         }
         if self.key > key {
-            return self.right.as_deref()?.find(key);
+            match &self.right {
+                Some(node) => return node.find(key),
+                None => return None,
+            }
         }
         Some(self)
     }
 
     fn find_mut(&mut self, key: Self::Item) -> Option<&mut Self> {
         if self.key < key {
-            return self.left.as_deref_mut()?.find_mut(key);
+            match &mut self.left {
+                Some(node) => return node.find_mut(key),
+                None => return None,
+            }
         }
         if self.key > key {
-            return self.right.as_deref_mut()?.find_mut(key);
+            match &mut self.right {
+                Some(node) => return node.find_mut(key),
+                None => return None,
+            }
         }
         Some(self)
     }
