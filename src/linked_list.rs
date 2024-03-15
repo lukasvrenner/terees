@@ -72,8 +72,15 @@ impl<T: PartialEq> LinkedList<T> {
 
     /// returns the number of nodes in `self`
     pub fn length(&self) -> usize {
-        let mut length = 0;
-        todo!();
+        // start at one because we cannot have an empty list (as of now)
+        let mut length = 1;
+        let mut next = &self.next;
+
+        while let Some(node) = next {
+            next = &node.next;
+            length += 1;
+        }
+        length
     }
 
     /// returns true if `self` contains a node that contains `key`
@@ -194,5 +201,13 @@ mod tests {
         linked_list.next.map(|node| {
             assert_eq!(node.key, 5);
         });
+    }
+
+    #[test]
+    fn length() {
+        let mut linked_list = LinkedList::new(5);
+        linked_list.add(4);
+        linked_list.add(3);
+        assert_eq!(linked_list.length(), 3);
     }
 }
