@@ -230,6 +230,23 @@ mod tests {
         let mut linked_list = LinkedList::new("hello");
         linked_list.add("world");
 
+        assert!(!linked_list.contains("goodbye"));
         assert!(linked_list.contains("world"));
+    }
+
+    #[test]
+    fn concat() {
+        let mut first_list = LinkedList::new(3);
+        first_list.add(5);
+        let mut second_list = LinkedList::new(4);
+        second_list.add(8);
+        first_list.concat(second_list);
+
+        let mut third_list = LinkedList::new(4);
+        third_list.add(8);
+        third_list.add(3);
+        third_list.add(5);
+
+        assert_eq!(first_list, third_list);
     }
 }
