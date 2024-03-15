@@ -101,19 +101,15 @@ impl<T: PartialEq> Tree for LinkedList<T> {
     }
 
     fn remove(&mut self, key: Self::Item) {
-        // match &mut self.next {
-        //     Some(ref mut node) => {
-        //         if node.key == key {
-        //             std::mem::swap(&mut self.next, &mut node.next);
-        //             std::mem::drop(node);
-        //         }
-        //         else {
-        //             node.as_mut().remove(key);
-        //         }
-        //     },
-        //     None => return,
-        // }
-        todo!();
+        match &mut self.next {
+            Some(node) => {
+                if node.key == key {
+                    return self.next = node.next.take();
+                }
+                node.remove(key);
+            }
+            None => return,
+        }
     }
 
     /// concatenates `self` and `other`
