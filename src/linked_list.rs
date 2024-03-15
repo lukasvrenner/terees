@@ -84,8 +84,17 @@ impl<T: PartialEq> LinkedList<T> {
     }
 
     /// returns true if `self` contains a node that contains `key`
-    pub fn contains(&self, key: usize) -> bool {
-        todo!();
+    /// otherwise, returns false
+    pub fn contains(&self, key: T) -> bool {
+        match &self.next {
+            Some(node) => {
+                if node.key == key {
+                    return true;
+                }
+                node.contains(key)
+            },
+            None => false,
+        }
     }
 
     /// returns an optional reference to the key at index `index`
