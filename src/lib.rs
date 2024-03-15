@@ -19,4 +19,8 @@ pub trait Tree {
     /// concatenates trees
     /// does not necessarily maintain original order
     fn concat(&mut self, other: Self);
+
+    /// returns true if `self` contains a node that contains `key`
+    /// otherwise, returns false
+    fn contains(&self, key: Self::Item) -> bool;
 }

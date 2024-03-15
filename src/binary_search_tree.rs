@@ -88,4 +88,20 @@ impl<T: PartialOrd> Tree for BSTree<T> {
     fn concat(&mut self, other: Self) {
         todo!()
     }
+
+    fn contains(&self, key: Self::Item) -> bool {
+        if self.key < key {
+            match &self.left {
+                Some(node) => return node.contains(key),
+                None => return false,
+            };
+        }
+        if self.key > key {
+            match &self.right {
+                Some(node) => return node.contains(key),
+                None => return false,
+            };
+        }
+        true
+    }
 }

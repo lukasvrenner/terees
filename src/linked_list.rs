@@ -83,20 +83,6 @@ impl<T: PartialEq> LinkedList<T> {
         length
     }
 
-    /// returns true if `self` contains a node that contains `key`
-    /// otherwise, returns false
-    pub fn contains(&self, key: T) -> bool {
-        match &self.next {
-            Some(node) => {
-                if node.key == key {
-                    return true;
-                }
-                node.contains(key)
-            },
-            None => false,
-        }
-    }
-
     /// returns an optional reference to the key at index `index`
     pub fn get(&self, index: usize) -> Option<&T> {
         todo!();
@@ -168,6 +154,19 @@ impl<T: PartialEq> Tree for LinkedList<T> {
             None => self.next = Some(Box::new(other)),
         }
     }
+
+    fn contains(&self, key: Self::Item) -> bool {
+        match &self.next {
+            Some(node) => {
+                if node.key == key {
+                    return true;
+                }
+                node.contains(key)
+            },
+            None => false,
+        }
+    }
+
 }
 
 #[cfg(test)]
