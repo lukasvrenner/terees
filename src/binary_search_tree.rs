@@ -1,16 +1,19 @@
+//! a generic binary search tree
+//! this tree makes no attempts to maintain balance
+//! if you are looking for a self-balancing binary search tree, see AvlTree
 use crate::Tree;
 
 /// keys on left branches are less than `self.key`, while values to the right
 /// are greater than or equal to `self.key`
-pub struct BSTree<T: PartialOrd> {
+pub struct BsTree<T: PartialOrd> {
     key: T,
-    left: Option<Box<BSTree<T>>>,
-    right: Option<Box<BSTree<T>>>,
+    left: Option<Box<BsTree<T>>>,
+    right: Option<Box<BsTree<T>>>,
 }
 
-impl<T: PartialOrd> BSTree<T> {
-    pub fn new(key: T) -> BSTree<T> {
-        BSTree {
+impl<T: PartialOrd> BsTree<T> {
+    pub fn new(key: T) -> BsTree<T> {
+        BsTree {
             key,
             left: None,
             right: None,
@@ -18,7 +21,7 @@ impl<T: PartialOrd> BSTree<T> {
     }
 }
 
-impl<T: PartialOrd> Tree for BSTree<T> {
+impl<T: PartialOrd> Tree for BsTree<T> {
     type Item = T;
 
     fn add(&mut self, key: Self::Item) {
@@ -27,7 +30,7 @@ impl<T: PartialOrd> Tree for BSTree<T> {
             match &mut self.left {
                 Some(ref mut tree) => tree.add(key),
                 None => {
-                    self.left = Some(Box::new(BSTree {
+                    self.left = Some(Box::new(BsTree {
                         key,
                         left: None,
                         right: None,
@@ -39,7 +42,7 @@ impl<T: PartialOrd> Tree for BSTree<T> {
             match &mut self.right {
                 Some(ref mut tree) => tree.add(key),
                 None => {
-                    self.right = Some(Box::new(BSTree {
+                    self.right = Some(Box::new(BsTree {
                         key,
                         left: None,
                         right: None,
@@ -50,6 +53,7 @@ impl<T: PartialOrd> Tree for BSTree<T> {
     }
 
     fn remove(&mut self, key: Self::Item) {
+        let mut remove_me = self.find_mut(key);
         todo!();
     }
 
