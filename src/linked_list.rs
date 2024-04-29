@@ -149,6 +149,13 @@ impl<T: PartialEq> Tree for LinkedList<T> {
     }
 }
 
+impl<T: PartialEq> From<Node<T>> for LinkedList<T> {
+    fn from(value: Node<T>) -> Self {
+        let len = value.length();
+        LinkedList { head: Some(Box::from(value)), len, }
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct Node<T: PartialEq> {
     key: T,
@@ -276,6 +283,15 @@ impl<T: PartialEq> Node<T> {
             None => false,
         }
     }
+
+    fn length(&self) -> usize {
+        let mut length = 1;
+        if let Some(ref node) = self.next {
+            length += node.length();
+        }
+        length
+    }
+
 }
 
 #[cfg(test)]

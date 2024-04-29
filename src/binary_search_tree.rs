@@ -5,7 +5,7 @@ use crate::Tree;
 
 pub struct BsTree<T: PartialOrd> {
     head: Option<Box<Node<T>>>,
-    len: usize,
+    size: usize,
 }
 
 impl<T: PartialOrd> Tree for BsTree<T> {
@@ -14,12 +14,12 @@ impl<T: PartialOrd> Tree for BsTree<T> {
     /// creates and empty BsTree<T>
     #[inline]
     fn new() -> Self {
-        BsTree { head: None, len: 0 }
+        BsTree { head: None, size: 0 }
     }
 
     #[inline]
     fn size(&self) -> usize {
-        self.len
+        self.size
     }
 
     #[inline]
@@ -31,13 +31,13 @@ impl<T: PartialOrd> Tree for BsTree<T> {
     }
 
     fn concat(&mut self, other: Self) {
-        self.len += other.len;
+        self.size += other.size;
         todo!();
     }
 
     fn remove(&mut self, key: Self::Item) {
         if let Some(ref mut node) = self.head {
-            self.len -= 1;
+            self.size -= 1;
             todo!();
         }
     }
@@ -48,7 +48,15 @@ impl<T: PartialOrd> Tree for BsTree<T> {
             Some(ref mut node) => node.add(key),
             None => self.head = Some(Box::from(Node::new(key))),
         }
-        self.len += 1;
+        self.size += 1;
+    }
+
+}
+
+impl<T: PartialOrd> From<Node<T>> for BsTree<T> {
+    fn from(value: Node<T>) -> Self {
+        let size = value.size();
+        BsTree { head: Some(Box::from(value)), size, }
     }
 }
 /// `left` represents nodes that have smaller `key`s than `self.key`
@@ -141,5 +149,16 @@ impl<T: PartialOrd> Node<T> {
             };
         }
         true
+    }
+
+    fn size(&self) -> usize {
+        let mut size = 1;
+        if let Some(ref node) = self.right {
+            size += node.size();
+        }
+        if let Some(ref node) = self.left {
+            size += node.size();
+        }
+        size
     }
 }
