@@ -218,7 +218,13 @@ impl<T: PartialEq> Node<T> {
 
     /// returns an optional mutable reference to the key at index `index`
     fn get_mut(&mut self, index: usize) -> Option<&mut T> {
-        todo!();
+        if index == 0 {
+            return Some(&mut self.key);
+        }
+        match self.next {
+            Some(ref mut node) => node.get_mut(index - 1),
+            None => None,
+        }
     }
 
     /// sets the key at index `index` to `key`
