@@ -3,9 +3,6 @@
 //! if you are looking for a self-balancing binary search tree, see AvlTree
 use crate::Tree;
 
-/// keys on left branches are less than `self.key`, while values to the right
-/// are greater than or equal to `self.key`
-
 pub struct BsTree<T: PartialOrd> {
     head: Option<Box<Node<T>>>,
     len: usize,
@@ -14,8 +11,8 @@ pub struct BsTree<T: PartialOrd> {
 impl<T: PartialOrd> Tree for BsTree<T> {
     type Item = T;
 
-    #[inline]
     /// creates and empty BsTree<T>
+    #[inline]
     fn new() -> Self {
         BsTree { head: None, len: 0 }
     }
@@ -54,6 +51,8 @@ impl<T: PartialOrd> Tree for BsTree<T> {
         self.len += 1;
     }
 }
+/// `left` represents nodes that have smaller `key`s than `self.key`
+/// `right` represents nodes that have `key`s greater than or equal to `self.key`
 struct Node<T: PartialOrd> {
     key: T,
     left: Option<Box<Node<T>>>,
