@@ -8,11 +8,6 @@ A collection of tree-like data structures
 - AVL Tree
 - B-Tree
 
-### Note:
-current implemnations for all structures do *not* support emptiness.\
-such a feature would be very convenient, but, as of now, a feasable solution
-is out of sight.
-
 ## License
 Copyright 2024 Lukas Renner
 
