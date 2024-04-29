@@ -110,9 +110,10 @@ impl<T: PartialEq> Tree for LinkedList<T> {
 
     #[inline]
     fn add(&mut self, key: T) {
-        let mut temp = Node { key, next: None };
-        std::mem::swap(&mut temp.next, &mut self.head);
-        self.head = Some(Box::from(temp));
+        self.head = Some(Box::from(Node {
+            key,
+            next: self.head.take(),
+        }));
         self.len += 1;
     }
 
@@ -121,13 +122,14 @@ impl<T: PartialEq> Tree for LinkedList<T> {
         if let Some(ref mut node) = self.head {
             self.len -= 1;
             if self.len == 0 {
-                return self.head = None;
+                return self.head = node.next.take();
             }
             node.remove(key);
         }
     }
 
     /// appends `other` to `self`
+    #[inline]
     fn concat(&mut self, other: Self) {
         if let Some(other_node) = other.head {
             self.len += other.len;
