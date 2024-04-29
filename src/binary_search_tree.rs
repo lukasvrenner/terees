@@ -5,36 +5,76 @@ use crate::Tree;
 
 /// keys on left branches are less than `self.key`, while values to the right
 /// are greater than or equal to `self.key`
-pub struct BsTree<T: PartialOrd> {
-    key: T,
-    left: Option<Box<BsTree<T>>>,
-    right: Option<Box<BsTree<T>>>,
-}
 
-impl<T: PartialOrd> BsTree<T> {
-    pub fn new(key: T) -> BsTree<T> {
-        BsTree {
-            key,
-            left: None,
-            right: None,
-        }
-    }
+pub struct BsTree<T: PartialOrd> {
+    head: Option<Box<Node<T>>>,
+    len: usize,
 }
 
 impl<T: PartialOrd> Tree for BsTree<T> {
     type Item = T;
 
+    #[inline]
+    /// creates and empty BsTree<T>
+    fn new() -> Self {
+        BsTree { head: None, len: 0 }
+    }
+
+    #[inline]
+    fn size(&self) -> usize {
+        self.len
+    }
+
+    #[inline]
+    fn contains(&self, key: Self::Item) -> bool {
+        match self.head {
+            Some(ref node) => node.contains(key),
+            None => false,
+        }
+    }
+
+    fn concat(&mut self, other: Self) {
+        self.len += other.len;
+        todo!();
+    }
+
+    fn remove(&mut self, key: Self::Item) {
+        if let Some(ref mut node) = self.head {
+            self.len -= 1;
+            todo!();
+        }
+    }
+
+    #[inline]
     fn add(&mut self, key: Self::Item) {
+        match self.head {
+            Some(ref mut node) => node.add(key),
+            None => self.head = Some(Box::from(Node::new(key))),
+        }
+        self.len += 1;
+    }
+}
+struct Node<T: PartialOrd> {
+    key: T,
+    left: Option<Box<Node<T>>>,
+    right: Option<Box<Node<T>>>,
+}
+
+impl<T: PartialOrd> Node<T> {
+    fn new(key: T) -> Node<T> {
+        Node {
+            key,
+            left: None,
+            right: None,
+        }
+    }
+    fn add(&mut self, key: T) {
         // check left branch
         if self.key < key {
             match &mut self.left {
                 Some(ref mut tree) => tree.add(key),
                 None => {
-                    self.left = Some(Box::new(BsTree {
-                        key,
-                        left: None,
-                        right: None,
-                    }));
+                    self.left = Some(Box::new(Node::new(key)));
                 }
             }
         } else {
@@ -42,22 +82,17 @@ impl<T: PartialOrd> Tree for BsTree<T> {
             match &mut self.right {
                 Some(ref mut tree) => tree.add(key),
                 None => {
-                    self.right = Some(Box::new(BsTree {
-                        key,
-                        left: None,
-                        right: None,
-                    }));
+                    self.right = Some(Box::new(Node::new(key)));
                 }
             }
         }
     }
 
-    fn remove(&mut self, key: Self::Item) {
-        let mut remove_me = self.find_mut(key);
+    fn remove(&mut self, key: T) {
         todo!();
     }
 
-    fn find(&self, key: Self::Item) -> Option<&Self> {
+    fn find(&self, key: T) -> Option<&Node<T>> {
         if self.key < key {
             match &self.left {
                 Some(node) => return node.find(key),
@@ -73,7 +108,7 @@ impl<T: PartialOrd> Tree for BsTree<T> {
         Some(self)
     }
 
-    fn find_mut(&mut self, key: Self::Item) -> Option<&mut Self> {
+    fn find_mut(&mut self, key: T) -> Option<&mut Node<T>> {
         if self.key < key {
             match &mut self.left {
                 Some(node) => return node.find_mut(key),
@@ -89,11 +124,11 @@ impl<T: PartialOrd> Tree for BsTree<T> {
         Some(self)
     }
 
-    fn concat(&mut self, other: Self) {
+    fn concat(&mut self, other: Node<T>) {
         todo!()
     }
 
-    fn contains(&self, key: Self::Item) -> bool {
+    fn contains(&self, key: T) -> bool {
         if self.key < key {
             match &self.left {
                 Some(node) => return node.contains(key),

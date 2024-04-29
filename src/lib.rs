@@ -4,23 +4,23 @@ pub mod linked_list;
 pub trait Tree {
     type Item;
 
-    /// adds `key` to the `self`
+    /// creates an empty `Self`
+    fn new() -> Self;
+
+    /// adds `key` to `self`
     fn add(&mut self, key: Self::Item);
 
     /// removes the node containing `key` from `self`
     fn remove(&mut self, key: Self::Item);
 
-    /// returns an optional reference to the node containing `key`
-    fn find(&self, key: Self::Item) -> Option<&Self>;
-
-    /// returns an optional mutable reference to the node containing `key`
-    fn find_mut(&mut self, key: Self::Item) -> Option<&mut Self>;
-
-    /// concatenates trees
-    /// does not necessarily maintain original order
+    /// concatenates `other` to `self`
+    /// note: does not necessarily maintain original order
     fn concat(&mut self, other: Self);
 
-    /// returns true if `self` contains a node that contains `key`
+    /// returns true if `self` contains a node with key `key`.
     /// otherwise, returns false
     fn contains(&self, key: Self::Item) -> bool;
+
+    /// returns the number of nodes in `self`
+    fn size(&self) -> usize;
 }
