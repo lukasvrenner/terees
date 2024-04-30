@@ -1,13 +1,5 @@
 A collection of tree-like data structures
 
-## Current Supported Data Structures
-- Linked List
-- Binary Search Tree
-
-### Planned Additions
-- AVL Tree
-- B-Tree
-
 ## License
 Copyright 2024 Lukas Renner
 

@@ -1,5 +1,5 @@
-//! a generic binary search tree
-//! this tree makes no attempts to maintain balance
+//! a binary search tree with keys and values
+//! note: this tree makes no attempts to maintain balance
 
 use super::entry::Entry;
 pub struct BsTreeMap<K, V>
@@ -53,11 +53,12 @@ where
         }
     }
 
-    /// inserts a new entry with key `key` and value `value`
+    /// sets the value of the key with key `key` to `value`
+    /// if `key` already exists, the value is overridden
     #[inline]
     pub fn insert(&mut self, key: K, value: V) {
         match self.head {
-            Some(ref mut entry) => entry.add(key, value),
+            Some(ref mut entry) => entry.insert(key, value),
             None => self.head = Some(Box::from(Entry::new(key, value))),
         }
         self.size += 1;
@@ -79,6 +80,7 @@ where
             None => None,
         }
     }
+
 }
 
 impl<K, V> From<Entry<K, V>> for BsTreeMap<K, V>

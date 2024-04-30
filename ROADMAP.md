@@ -1,5 +1,4 @@
 # Future structures
-- BsTreeSet
 - AvLTreeMap
 - AvlTreeSet
 - BTreeMap

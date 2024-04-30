@@ -1,7 +1,7 @@
 //! an entry in `BsTreeMap`
 use std::cmp::Ordering;
 /// `left` represents entrys that have smaller `key`s than `self.key`
-/// `right` represents entrys that have `key`s greater than or equal to `self.key`
+/// `right` represents entrys that have greater `key`s than `self.key`
 pub struct Entry<K, V>
 where
     K: Ord,
@@ -57,16 +57,19 @@ where
         }
     }
 
-    pub fn add(&mut self, key: K, value: V) {
+    /// sets the value of the key with key `key` to `value`
+    /// if `key` already exists, the value is overridden
+    pub fn insert(&mut self, key: K, value: V) {
         match key.cmp(&self.key) {
             Ordering::Less => match self.left {
-                Some(ref mut entry) => entry.add(key, value),
+                Some(ref mut entry) => entry.insert(key, value),
                 None => self.left = Some(Box::from(Entry::new(key, value))),
             },
-            _ => match self.right {
-                Some(ref mut entry) => entry.add(key, value),
+            Ordering::Greater => match self.right {
+                Some(ref mut entry) => entry.insert(key, value),
                 None => self.right = Some(Box::from(Entry::new(key, value))),
             },
+            Ordering::Equal => self.value = value,
         }
     }
 
