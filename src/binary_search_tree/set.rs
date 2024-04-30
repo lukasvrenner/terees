@@ -1,7 +1,7 @@
 //! a binary search tree with keys but no associated value
 //! a degenerate form of `BsTreeMap`
 
-use super::map::BsTreeMap;
+use super::{map::BsTreeMap, entry::Entry};
 pub struct BsTreeSet<T>
 where
     T: Ord,
@@ -37,6 +37,22 @@ where
 
     pub fn extend(&mut self, other: BsTreeSet<T>) {
         self.map.extend(other.map);
+    }
+
+    pub fn smallest(&self) -> Option<&Entry<T, ()>> {
+        self.map.smallest()
+    }
+
+    pub fn smallest_mut(&mut self) -> Option<&mut Entry<T, ()>> {
+        self.map.smallest_mut()
+    }
+
+    pub fn largest(&self) -> Option<&Entry<T, ()>> {
+        self.map.largest()
+    }
+
+    pub fn largest_mut(&mut self) -> Option<&mut Entry<T, ()>> {
+        self.map.smallest_mut()
     }
 }
 

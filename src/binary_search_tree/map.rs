@@ -81,6 +81,37 @@ where
         }
     }
 
+    /// returns an optional reference to the smallest entry
+    pub fn smallest(&self) -> Option<&Entry<K, V>> {
+        match self.head {
+            Some(ref entry) => Some(entry.smallest()),
+            None => None,
+        }
+    }
+
+    /// returns an optional mutable reference to the smallest entry
+    pub fn smallest_mut(&mut self) -> Option<&mut Entry<K, V>> {
+        match self.head {
+            Some(ref mut entry) => Some(entry.smallest_mut()),
+            None => None,
+        }
+    }
+
+    /// returns an optional reference to the largest entry
+    pub fn largest(&self) -> Option<&Entry<K, V>> {
+        match self.head {
+            Some(ref entry) => Some(entry.largest()),
+            None => None,
+        }
+    }
+
+    /// returns an optional mutable reference to the largest entry
+    pub fn largest_mut(&mut self) -> Option<&mut Entry<K, V>> {
+        match self.head {
+            Some(ref mut entry) => Some(entry.largest_mut()),
+            None => None,
+        }
+    }
 }
 
 impl<K, V> From<Entry<K, V>> for BsTreeMap<K, V>

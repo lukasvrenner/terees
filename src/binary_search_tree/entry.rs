@@ -133,4 +133,35 @@ where
         }
         size
     }
+
+    /// returns a reference to the smallest entry
+    pub fn smallest(&self) -> &Entry<K, V> {
+        match self.left {
+            Some(ref entry) => entry.smallest(),
+            None => self,
+        }
+    }
+
+    /// returns a mutable reference to the smallest entry
+    pub fn smallest_mut(&mut self) -> &mut Entry<K, V> {
+        match self.left {
+            Some(ref mut entry) => entry.smallest_mut(),
+            None => self,
+        }
+    }
+    /// returns a reference to the largest entry
+    pub fn largest(&self) -> &Entry<K, V> {
+        match self.left {
+            Some(ref entry) => entry.largest(),
+            None => self,
+        }
+    }
+
+    /// returns a mutable reference to the largest entry
+    pub fn largest_mut(&mut self) -> &mut Entry<K, V> {
+        match self.left {
+            Some(ref mut entry) => entry.largest_mut(),
+            None => self,
+        }
+    }
 }
