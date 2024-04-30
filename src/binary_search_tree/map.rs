@@ -93,3 +93,12 @@ where
         }
     }
 }
+
+impl<K, V> Default for BsTreeMap<K, V>
+where
+    K: Ord,
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
