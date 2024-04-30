@@ -1,5 +1,5 @@
-use crate::Tree;
-
+//! a singly-linked list that allows for constant time insertion at the front
+use crate::linked_list::node::Node;
 pub struct LinkedList<T: PartialEq> {
     head: Option<Box<Node<T>>>,
     len: usize,
@@ -86,30 +86,27 @@ impl<T: PartialEq> LinkedList<T> {
     }
 
     /// swaps elements at indexes `first_index` and `second_index`
+    /// if no such element exists, nothing happens
     #[inline]
     pub fn swap(&mut self, first_index: usize, second_index: usize) {
         if let Some(ref mut node) = self.head {
             node.swap(first_index, second_index);
         }
     }
-}
-
-impl<T: PartialEq> Tree for LinkedList<T> {
-    type Item = T;
     /// creates an empty `LinkedList`
     #[inline]
-    fn new() -> Self {
+    pub fn new() -> Self {
         LinkedList { head: None, len: 0 }
     }
 
     /// returns the number of elements in `self`
     #[inline]
-    fn size(&self) -> usize {
+    pub fn size(&self) -> usize {
         self.len
     }
 
     #[inline]
-    fn add(&mut self, key: T) {
+    pub fn add(&mut self, key: T) {
         self.head = Some(Box::from(Node {
             key,
             next: self.head.take(),
@@ -118,7 +115,7 @@ impl<T: PartialEq> Tree for LinkedList<T> {
     }
 
     #[inline]
-    fn remove(&mut self, key: Self::Item) {
+    pub fn remove(&mut self, key: T) {
         if let Some(ref mut node) = self.head {
             self.len -= 1;
             if self.len == 0 {
@@ -130,7 +127,7 @@ impl<T: PartialEq> Tree for LinkedList<T> {
 
     /// appends `other` to `self`
     #[inline]
-    fn concat(&mut self, other: Self) {
+    pub fn concat(&mut self, other: LinkedList<T>) {
         if let Some(other_node) = other.head {
             self.len += other.len;
             match self.head {
@@ -141,7 +138,7 @@ impl<T: PartialEq> Tree for LinkedList<T> {
     }
 
     #[inline]
-    fn contains(&self, key: Self::Item) -> bool {
+    pub fn contains(&self, key: T) -> bool {
         match self.head {
             Some(ref node) => node.contains(key),
             None => false,
@@ -156,143 +153,6 @@ impl<T: PartialEq> From<Node<T>> for LinkedList<T> {
     }
 }
 
-#[derive(Debug, PartialEq)]
-pub struct Node<T: PartialEq> {
-    key: T,
-    next: Option<Box<Node<T>>>,
-}
-
-impl<T: PartialEq> Node<T> {
-    /// creates a new `LinkedList`, with `key` as the key and
-    /// `None` as `next`
-    #[inline]
-    fn new(key: T) -> Node<T> {
-        Node { key, next: None }
-    }
-
-    /// pushes a new node with key `key` to the end of `self`
-    fn push(&mut self, key: T) {
-        match &mut self.next {
-            Some(node) => node.push(key),
-            None => self.next = Some(Box::new(Node { key, next: None })),
-        }
-    }
-
-    /// returns an optional mutable reference to node at index `index`
-    fn at_index_mut(&mut self, n: usize) -> Option<&mut Node<T>> {
-        if n == 0 {
-            return Some(self);
-        }
-        match &mut self.next {
-            Some(node) => node.at_index_mut(n - 1),
-            None => None,
-        }
-    }
-
-    /// inserts a new node at index `index`
-    fn insert(&mut self, index: usize, key: T) {
-        if let Some(node) = self.at_index_mut(index - 1) {
-            let new_node = Node {
-                key,
-                next: node.next.take(),
-            };
-            node.next = Some(Box::new(new_node));
-        }
-    }
-
-    /// removes the last node, and returns its key
-    fn pop(&mut self) -> T {
-        todo!();
-    }
-
-    /// truncates off all nodes after `index`
-    fn trunc(&mut self, index: usize) {
-        if let Some(node) = self.at_index_mut(index) {
-            node.next = None;
-        }
-    }
-
-    /// returns an optional reference to the key at index `index`
-    fn get(&self, index: usize) -> Option<&T> {
-        if index == 0 {
-            return Some(&self.key);
-        }
-        match self.next {
-            Some(ref node) => node.get(index - 1),
-            None => None,
-        }
-    }
-
-    /// returns an optional mutable reference to the key at index `index`
-    fn get_mut(&mut self, index: usize) -> Option<&mut T> {
-        if index == 0 {
-            return Some(&mut self.key);
-        }
-        match self.next {
-            Some(ref mut node) => node.get_mut(index - 1),
-            None => None,
-        }
-    }
-
-    /// sets the key at index `index` to `key`
-    /// if the index is out of bounds, nothing happens
-    fn set(&mut self, index: usize, key: T) {
-        if let Some(node) = self.at_index_mut(index) {
-            node.key = key;
-        }
-    }
-
-    fn swap(&mut self, first_index: usize, second_index: usize) {
-        todo!();
-    }
-
-    /// removes the node containing `key`
-    /// note: does not consider the first node
-    fn remove(&mut self, key: T) {
-        match &mut self.next {
-            Some(node) => {
-                if node.key == key {
-                    self.next = node.next.take();
-                } else {
-                    node.remove(key);
-                }
-            }
-            None => (),
-        }
-    }
-
-    /// concatenates `self` and `other`
-    fn concat(&mut self, other: Node<T>) {
-        match &mut self.next {
-            Some(node) => node.concat(other),
-            None => self.next = Some(Box::new(other)),
-        }
-    }
-
-    fn contains(&self, key: T) -> bool {
-        if self.key == key {
-            return true;
-        }
-        match &self.next {
-            Some(node) => {
-                if node.key == key {
-                    return true;
-                }
-                node.contains(key)
-            }
-            None => false,
-        }
-    }
-
-    fn length(&self) -> usize {
-        let mut length = 1;
-        if let Some(ref node) = self.next {
-            length += node.length();
-        }
-        length
-    }
-
-}
 
 #[cfg(test)]
 mod tests {
