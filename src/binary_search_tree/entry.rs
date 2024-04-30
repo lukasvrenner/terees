@@ -2,17 +2,23 @@
 use std::cmp::Ordering;
 /// `left` represents entrys that have smaller `key`s than `self.key`
 /// `right` represents entrys that have `key`s greater than or equal to `self.key`
-pub struct Entry<T, U> where T: Ord {
-    key: T,
-    value: U,
-    left: Option<Box<Entry<T, U>>>,
-    right: Option<Box<Entry<T, U>>>,
+pub struct Entry<K, V>
+where
+    K: Ord,
+{
+    key: K,
+    value: V,
+    left: Option<Box<Entry<K, V>>>,
+    right: Option<Box<Entry<K, V>>>,
 }
 
-impl<T, U> Entry<T, U> where T: Ord {
+impl<K, V> Entry<K, V>
+where
+    K: Ord,
+{
     /// creates a single `Entry` with key `key` and value `value`
     #[inline]
-    pub fn new(key: T, value: U) -> Entry<T, U> {
+    pub fn new(key: K, value: V) -> Entry<K, V> {
         Entry {
             key,
             value,
@@ -22,117 +28,96 @@ impl<T, U> Entry<T, U> where T: Ord {
     }
 
     /// returns an optional reference to the `value` with key `key`
-    pub fn get(&self, key: T) -> Option<&U> {
+    pub fn get(&self, key: K) -> Option<&V> {
         match key.cmp(&self.key) {
-            Ordering::Less => {
-                match self.left {
-                    Some(ref entry) => entry.get(key),
-                    None => None,
-                }
+            Ordering::Less => match self.left {
+                Some(ref entry) => entry.get(key),
+                None => None,
             },
-            Ordering::Greater => {
-                match self.right {
-                    Some(ref entry) => entry.get(key),
-                    None => None,
-                }
+            Ordering::Greater => match self.right {
+                Some(ref entry) => entry.get(key),
+                None => None,
             },
             Ordering::Equal => Some(&self.value),
         }
     }
 
     /// returns an optional mutable reference to the `value` with key `key`
-    pub fn get_mut(&mut self, key: T) -> Option<&mut U> {
+    pub fn get_mut(&mut self, key: K) -> Option<&mut V> {
         match key.cmp(&mut self.key) {
-            Ordering::Less => {
-                match self.left {
-                    Some(ref mut entry) => entry.get_mut(key),
-                    None => None,
-                }
+            Ordering::Less => match self.left {
+                Some(ref mut entry) => entry.get_mut(key),
+                None => None,
             },
-            Ordering::Greater => {
-                match self.right {
-                    Some(ref mut entry) => entry.get_mut(key),
-                    None => None,
-                }
+            Ordering::Greater => match self.right {
+                Some(ref mut entry) => entry.get_mut(key),
+                None => None,
             },
             Ordering::Equal => Some(&mut self.value),
         }
     }
 
-    pub fn add(&mut self, key: T, value: U) {
-        // check left branch
-        if self.key < key {
-            match &mut self.left {
-                Some(ref mut tree) => tree.add(key, value),
-                None => {
-                    self.left = Some(Box::new(Entry::new(key, value)));
-                }
-            }
-        } else {
-            // right branch
-            match &mut self.right {
-                Some(ref mut tree) => tree.add(key, value),
-                None => {
-                    self.right = Some(Box::new(Entry::new(key, value)));
-                }
-            }
+    pub fn add(&mut self, key: K, value: V) {
+        match key.cmp(&self.key) {
+            Ordering::Less => match self.left {
+                Some(ref mut entry) => entry.add(key, value),
+                None => self.left = Some(Box::from(Entry::new(key, value))),
+            },
+            _ => match self.right {
+                Some(ref mut entry) => entry.add(key, value),
+                None => self.right = Some(Box::from(Entry::new(key, value))),
+            },
         }
     }
 
-    pub fn remove(&mut self, key: T) {
+    pub fn remove(&mut self, key: K) {
         todo!();
     }
 
-    pub fn find(&self, key: T) -> Option<&Entry<T, U>> {
-        if self.key < key {
-            match &self.left {
-                Some(entry) => return entry.find(key),
-                None => return None,
-            }
+    pub fn find(&self, key: K) -> Option<&Entry<K, V>> {
+        match key.cmp(&self.key) {
+            Ordering::Less => match self.left {
+                Some(ref entry) => entry.find(key),
+                None => None,
+            },
+            Ordering::Greater => match self.right {
+                Some(ref entry) => entry.find(key),
+                None => None,
+            },
+            Ordering::Equal => Some(self),
         }
-        if self.key > key {
-            match &self.right {
-                Some(entry) => return entry.find(key),
-                None => return None,
-            }
-        }
-        Some(self)
     }
 
-    pub fn find_mut(&mut self, key: T) -> Option<&mut Entry<T, U>> {
-        if self.key < key {
-            match &mut self.left {
-                Some(entry) => return entry.find_mut(key),
-                None => return None,
-            }
+    pub fn find_mut(&mut self, key: K) -> Option<&mut Entry<K, V>> {
+        match key.cmp(&self.key) {
+            Ordering::Less => match self.left {
+                Some(ref mut entry) => entry.find_mut(key),
+                None => None,
+            },
+            Ordering::Greater => match self.right {
+                Some(ref mut entry) => entry.find_mut(key),
+                None => None,
+            },
+            Ordering::Equal => Some(self),
         }
-        if self.key > key {
-            match &mut self.right {
-                Some(entry) => return entry.find_mut(key),
-                None => return None,
-            }
-        }
-        Some(self)
     }
 
-    pub fn concat(&mut self, other: Entry<T, U>) {
+    pub fn concat(&mut self, other: Entry<K, V>) {
         todo!()
     }
 
-    pub fn contains(&self, key: T) -> bool {
-        if self.key < key {
-            match &self.left {
-                Some(entry) => return entry.contains(key),
-                None => return false,
-            };
+    pub fn contains(&self, key: K) -> bool {
+        match key.cmp(&self.key) {
+            Ordering::Less => match self.left {
+                Some(ref entry) => entry.contains(key),
+                None => false,
+            },
+            Ordering::Greater => match self.right {
+                Some(ref entry) => entry.contains(key),
+                None => false,
+            },
+            Ordering::Equal => true,
         }
-        if self.key > key {
-            match &self.right {
-                Some(entry) => return entry.contains(key),
-                None => return false,
-            };
-        }
-        true
     }
 
     pub fn size(&self) -> usize {

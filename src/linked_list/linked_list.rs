@@ -1,16 +1,18 @@
 //! a singly-linked list that allows for constant time insertion at the front
-use crate::linked_list::node::Node;
-pub struct LinkedList<T: PartialEq> {
+use std::usize;
+
+use super::node::Node;
+pub struct LinkedList<T> {
     head: Option<Box<Node<T>>>,
     len: usize,
 }
 
-impl<T: PartialEq> LinkedList<T> {
-    /// appends a new element `key` to `self`
-    pub fn push(&mut self, key: T) {
+impl<T> LinkedList<T> {
+    /// appends a new element `value` to `self`
+    pub fn push(&mut self, value: T) {
         match self.head {
-            Some(ref mut node) => node.push(key),
-            None => self.head = Some(Box::from(Node::new(key))),
+            Some(ref mut node) => node.push(value),
+            None => self.head = Some(Box::from(Node::new(value))),
         };
         self.len += 1;
     }
@@ -33,15 +35,15 @@ impl<T: PartialEq> LinkedList<T> {
         }
     }
 
-    /// inserts `key` at index `index`
+    /// inserts `value` at index `index`
     #[inline]
-    pub fn insert(&mut self, index: usize, key: T) {
+    pub fn insert(&mut self, index: usize, value: T) {
         if index == 0 {
-            return self.add(key);
+            return self.add(value);
         }
         match self.head {
-            Some(ref mut node) => node.insert(index, key),
-            None => self.head = Some(Box::from(Node::new(key))),
+            Some(ref mut node) => node.insert(index, value),
+            None => self.head = Some(Box::from(Node::new(value))),
         }
         self.len += 1;
     }
@@ -53,7 +55,7 @@ impl<T: PartialEq> LinkedList<T> {
             Some(ref mut node) => {
                 self.len -= 1;
                 if self.len == 0 {
-                    // let temp = node.key;
+                    // let temp = node.value;
                     // self.head = None;
                     // return Some(temp);
                     todo!();
@@ -76,12 +78,12 @@ impl<T: PartialEq> LinkedList<T> {
         }
     }
 
-    /// sets the element at index `index` to `key`
+    /// sets the element at index `index` to `value`
     /// if no such element exists, nothing happens
     #[inline]
-    pub fn set(&mut self, index: usize, key: T) {
+    pub fn set(&mut self, index: usize, value: T) {
         if let Some(ref mut node) = self.head {
-            node.set(index, key);
+            node.set(index, value);
         }
     }
 
@@ -106,23 +108,12 @@ impl<T: PartialEq> LinkedList<T> {
     }
 
     #[inline]
-    pub fn add(&mut self, key: T) {
+    pub fn add(&mut self, value: T) {
         self.head = Some(Box::from(Node {
-            key,
+            value,
             next: self.head.take(),
         }));
         self.len += 1;
-    }
-
-    #[inline]
-    pub fn remove(&mut self, key: T) {
-        if let Some(ref mut node) = self.head {
-            self.len -= 1;
-            if self.len == 0 {
-                return self.head = node.next.take();
-            }
-            node.remove(key);
-        }
     }
 
     /// appends `other` to `self`
@@ -136,23 +127,56 @@ impl<T: PartialEq> LinkedList<T> {
             }
         }
     }
+}
+
+impl<T> LinkedList<T>
+where
+    T: PartialEq,
+{
+    #[inline]
+    pub fn contains(&self, value: T) -> bool {
+        match self.head {
+            Some(ref node) => node.contains(value),
+            None => false,
+        }
+    }
+
+    /// removes the node with value `value` from the list
+    #[inline]
+    pub fn remove(&mut self, value: T) {
+        if let Some(ref mut node) = self.head {
+            self.len -= 1;
+            if self.len == 0 {
+                return self.head = node.next.take();
+            }
+            node.remove(value);
+        }
+    }
 
     #[inline]
-    pub fn contains(&self, key: T) -> bool {
+    pub fn find(&self, value: T) -> Option<usize> {
         match self.head {
-            Some(ref node) => node.contains(key),
-            None => false,
+            Some(ref node) => node.find(value),
+            None => None,
         }
     }
 }
 
-impl<T: PartialEq> From<Node<T>> for LinkedList<T> {
+impl<T> From<Node<T>> for LinkedList<T> {
     fn from(value: Node<T>) -> Self {
         let len = value.length();
-        LinkedList { head: Some(Box::from(value)), len, }
+        LinkedList {
+            head: Some(Box::from(value)),
+            len,
+        }
     }
 }
 
+impl<T> Default for LinkedList<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -165,7 +189,7 @@ mod tests {
         linked_list.add(3);
 
         assert_eq!(linked_list.size(), 2);
-        assert_eq!(linked_list.head.unwrap().key, 3);
+        assert_eq!(linked_list.head.unwrap().value, 3);
     }
 
     #[test]
