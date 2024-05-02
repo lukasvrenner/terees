@@ -5,7 +5,7 @@ pub struct Entry<K, V> {
 }
 
 impl<K, V> Entry<K, V> {
-    pub fn new(key: K, value: V) -> Entry<K, V> {
+    pub const fn new(key: K, value: V) -> Entry<K, V> {
         Entry { key, value }
     }
 

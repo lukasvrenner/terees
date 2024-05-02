@@ -17,7 +17,7 @@ where
 {
     /// creates an empty BsTree<T>
     #[inline]
-    pub fn new() -> BsTreeMap<K, V> {
+    pub const fn new() -> BsTreeMap<K, V> {
         BsTreeMap {
             head: None,
             size: 0,
@@ -62,7 +62,9 @@ where
             Some(ref mut entry) => entry.insert(key, value),
             None => self.head = Some(Box::from(Node::new(key, value))),
         }
-        self.size += 1;
+
+        // TODO -- we only want to add if a *new* key was added
+        self.size += 1; // bad
     }
 
     /// returns an optional reference to the `value` with key `key`
@@ -113,6 +115,20 @@ where
             None => None,
         }
     }
+
+    pub fn entry(&self, key: &K) -> Option<&Entry<K, V>> {
+        match self.head {
+            Some(ref entry) => entry.entry(key),
+            None => None,
+        }
+    }
+
+    pub fn entry_mut(&mut self, key: &K) -> Option<&mut Entry<K, V>> {
+        match self.head {
+            Some(ref mut entry) => entry.entry_mut(key),
+            None => None,
+        }
+    }
 }
 
 impl<K, V> From<Node<K, V>> for BsTreeMap<K, V>
@@ -134,5 +150,40 @@ where
 {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn basic_tree() -> BsTreeMap<usize, String> {
+        let mut tree = BsTreeMap::new();
+        tree.insert(5, " , ".to_string());
+        tree.insert(3, "hello".to_string());
+        tree.insert(6, "world".to_string());
+        tree.insert(7, "this is a string!".to_string());
+        tree.insert(1, "this is value has a key of 1".to_string());
+        tree.insert(4, "hmmm".to_string());
+
+        tree
+    }
+
+    #[test]
+    fn add() {
+        let mut tree = BsTreeMap::new();
+        tree.insert(5, " , ");
+        tree.insert(3, "hello");
+        tree.insert(7, "haha get replaced");
+        tree.insert(6, "world");
+        tree.insert(7, "hii");
+
+        assert_eq!(tree.size(), 4);
+        assert_eq!(tree.get(&7), Some(&"haha get replaced"));
+        assert_eq!(tree.get(&8), None);
+    }
+
+    #[test]
+    fn contains() {
     }
 }

@@ -77,29 +77,30 @@ where
         todo!();
     }
 
-    pub fn find(&self, key: &K) -> Option<&Entry<K, V>> {
+    /// returns a reference to the `Entry` with key `key`
+    pub fn entry(&self, key: &K) -> Option<&Entry<K, V>> {
         match key.cmp(self.entry.key()) {
             Ordering::Less => match self.left {
-                Some(ref node) => node.find(key),
+                Some(ref node) => node.entry(key),
                 None => None,
             },
             Ordering::Greater => match self.right {
-                Some(ref node) => node.find(key),
+                Some(ref node) => node.entry(key),
                 None => None,
             },
             Ordering::Equal => Some(&self.entry),
         }
     }
 
-    /// returns a mutable reference t
-    pub fn find_mut(&mut self, key: &K) -> Option<&mut Entry<K, V>> {
+    /// returns a mutable reference to the `Entry` with key `key`
+    pub fn entry_mut(&mut self, key: &K) -> Option<&mut Entry<K, V>> {
         match key.cmp(self.entry.key()) {
             Ordering::Less => match self.left {
-                Some(ref mut entry) => entry.find_mut(key),
+                Some(ref mut entry) => entry.entry_mut(key),
                 None => None,
             },
             Ordering::Greater => match self.right {
-                Some(ref mut node) => node.find_mut(key),
+                Some(ref mut node) => node.entry_mut(key),
                 None => None,
             },
             Ordering::Equal => Some(&mut self.entry),

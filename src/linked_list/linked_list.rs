@@ -8,6 +8,12 @@ pub struct LinkedList<T> {
 }
 
 impl<T> LinkedList<T> {
+    /// creates an empty `LinkedList`
+    #[inline]
+    pub const fn new() -> Self {
+        LinkedList { head: None, len: 0 }
+    }
+
     /// appends a new element `value` to `self`
     pub fn push(&mut self, value: T) {
         match self.head {
@@ -94,11 +100,6 @@ impl<T> LinkedList<T> {
         if let Some(ref mut node) = self.head {
             node.swap(first_index, second_index);
         }
-    }
-    /// creates an empty `LinkedList`
-    #[inline]
-    pub fn new() -> Self {
-        LinkedList { head: None, len: 0 }
     }
 
     /// returns the number of elements in `self`
