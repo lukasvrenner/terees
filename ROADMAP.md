@@ -1,3 +1,6 @@
+# TODO
+- add tests
+- implement remaining functions
 # Future structures
 - AvLTreeMap
 - AvlTreeSet
