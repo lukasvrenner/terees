@@ -28,7 +28,7 @@ where
     }
 
     /// returns an optional reference to the `value` with key `key`
-    pub fn get(&self, key: K) -> Option<&V> {
+    pub fn get(&self, key: &K) -> Option<&V> {
         match key.cmp(&self.key) {
             Ordering::Less => match self.left {
                 Some(ref entry) => entry.get(key),
@@ -43,7 +43,7 @@ where
     }
 
     /// returns an optional mutable reference to the `value` with key `key`
-    pub fn get_mut(&mut self, key: K) -> Option<&mut V> {
+    pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
         match key.cmp(&mut self.key) {
             Ordering::Less => match self.left {
                 Some(ref mut entry) => entry.get_mut(key),

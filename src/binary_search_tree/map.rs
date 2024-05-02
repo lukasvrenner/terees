@@ -66,7 +66,7 @@ where
 
     /// returns an optional reference to the `value` with key `key`
     #[inline]
-    pub fn get(&self, key: K) -> Option<&V> {
+    pub fn get(&self, key: &K) -> Option<&V> {
         match self.head {
             Some(ref entry) => entry.get(key),
             None => None,
@@ -74,7 +74,7 @@ where
     }
 
     /// returns an optional mutable reference to the `value` with key `key`
-    pub fn get_mut(&mut self, key: K) -> Option<&mut V> {
+    pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
         match self.head {
             Some(ref mut entry) => entry.get_mut(key),
             None => None,
