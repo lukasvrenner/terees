@@ -1,27 +1,27 @@
-//! an entry in `BsTreeMap`
+//! an node in `BsTreeMap`
+use crate::entry::Entry;
 use std::cmp::Ordering;
+
 /// `left` represents entrys that have smaller `key`s than `self.key`
 /// `right` represents entrys that have greater `key`s than `self.key`
-pub struct Entry<K, V>
+pub struct Node<K, V>
 where
     K: Ord,
 {
-    key: K,
-    value: V,
-    left: Option<Box<Entry<K, V>>>,
-    right: Option<Box<Entry<K, V>>>,
+    entry: Entry<K, V>,
+    left: Option<Box<Node<K, V>>>,
+    right: Option<Box<Node<K, V>>>,
 }
 
-impl<K, V> Entry<K, V>
+impl<K, V> Node<K, V>
 where
     K: Ord,
 {
     /// creates a single `Entry` with key `key` and value `value`
     #[inline]
-    pub fn new(key: K, value: V) -> Entry<K, V> {
-        Entry {
-            key,
-            value,
+    pub fn new(key: K, value: V) -> Node<K, V> {
+        Node {
+            entry: Entry::new(key, value),
             left: None,
             right: None,
         }
@@ -29,94 +29,95 @@ where
 
     /// returns an optional reference to the `value` with key `key`
     pub fn get(&self, key: &K) -> Option<&V> {
-        match key.cmp(&self.key) {
+        match key.cmp(self.entry.key()) {
             Ordering::Less => match self.left {
-                Some(ref entry) => entry.get(key),
+                Some(ref node) => node.get(key),
                 None => None,
             },
             Ordering::Greater => match self.right {
-                Some(ref entry) => entry.get(key),
+                Some(ref node) => node.get(key),
                 None => None,
             },
-            Ordering::Equal => Some(&self.value),
+            Ordering::Equal => Some(self.entry.value()),
         }
     }
 
     /// returns an optional mutable reference to the `value` with key `key`
     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
-        match key.cmp(&mut self.key) {
+        match key.cmp(self.entry.key()) {
             Ordering::Less => match self.left {
-                Some(ref mut entry) => entry.get_mut(key),
+                Some(ref mut node) => node.get_mut(key),
                 None => None,
             },
             Ordering::Greater => match self.right {
-                Some(ref mut entry) => entry.get_mut(key),
+                Some(ref mut node) => node.get_mut(key),
                 None => None,
             },
-            Ordering::Equal => Some(&mut self.value),
+            Ordering::Equal => Some(self.entry.value_mut()),
         }
     }
 
     /// sets the value of the key with key `key` to `value`
     /// if `key` already exists, the value is overridden
     pub fn insert(&mut self, key: K, value: V) {
-        match key.cmp(&self.key) {
+        match key.cmp(self.entry.key()) {
             Ordering::Less => match self.left {
-                Some(ref mut entry) => entry.insert(key, value),
-                None => self.left = Some(Box::from(Entry::new(key, value))),
+                Some(ref mut node) => node.insert(key, value),
+                None => self.left = Some(Box::from(Node::new(key, value))),
             },
             Ordering::Greater => match self.right {
-                Some(ref mut entry) => entry.insert(key, value),
-                None => self.right = Some(Box::from(Entry::new(key, value))),
+                Some(ref mut node) => node.insert(key, value),
+                None => self.right = Some(Box::from(Node::new(key, value))),
             },
-            Ordering::Equal => self.value = value,
+            Ordering::Equal => *self.entry.value_mut() = value,
         }
     }
 
-    pub fn remove(&mut self, key: K) {
+    pub fn remove(&mut self, key: &K) {
         todo!();
     }
 
-    pub fn find(&self, key: K) -> Option<&Entry<K, V>> {
-        match key.cmp(&self.key) {
+    pub fn find(&self, key: &K) -> Option<&Entry<K, V>> {
+        match key.cmp(self.entry.key()) {
             Ordering::Less => match self.left {
-                Some(ref entry) => entry.find(key),
+                Some(ref node) => node.find(key),
                 None => None,
             },
             Ordering::Greater => match self.right {
-                Some(ref entry) => entry.find(key),
+                Some(ref node) => node.find(key),
                 None => None,
             },
-            Ordering::Equal => Some(self),
+            Ordering::Equal => Some(&self.entry),
         }
     }
 
-    pub fn find_mut(&mut self, key: K) -> Option<&mut Entry<K, V>> {
-        match key.cmp(&self.key) {
+    /// returns a mutable reference t
+    pub fn find_mut(&mut self, key: &K) -> Option<&mut Entry<K, V>> {
+        match key.cmp(self.entry.key()) {
             Ordering::Less => match self.left {
                 Some(ref mut entry) => entry.find_mut(key),
                 None => None,
             },
             Ordering::Greater => match self.right {
-                Some(ref mut entry) => entry.find_mut(key),
+                Some(ref mut node) => node.find_mut(key),
                 None => None,
             },
-            Ordering::Equal => Some(self),
+            Ordering::Equal => Some(&mut self.entry),
         }
     }
 
-    pub fn concat(&mut self, other: Entry<K, V>) {
+    pub fn merge(&mut self, other: Node<K, V>) {
         todo!()
     }
 
-    pub fn contains(&self, key: K) -> bool {
-        match key.cmp(&self.key) {
+    pub fn contains(&self, key: &K) -> bool {
+        match key.cmp(self.entry.key()) {
             Ordering::Less => match self.left {
-                Some(ref entry) => entry.contains(key),
+                Some(ref node) => node.contains(key),
                 None => false,
             },
             Ordering::Greater => match self.right {
-                Some(ref entry) => entry.contains(key),
+                Some(ref node) => node.contains(key),
                 None => false,
             },
             Ordering::Equal => true,
@@ -125,8 +126,8 @@ where
 
     pub fn size(&self) -> usize {
         let mut size = 1;
-        if let Some(ref entry) = self.right {
-            size += entry.size();
+        if let Some(ref node) = self.right {
+            size += node.size();
         }
         if let Some(ref entry) = self.left {
             size += entry.size();
@@ -138,7 +139,7 @@ where
     pub fn smallest(&self) -> &Entry<K, V> {
         match self.left {
             Some(ref entry) => entry.smallest(),
-            None => self,
+            None => &self.entry,
         }
     }
 
@@ -146,14 +147,14 @@ where
     pub fn smallest_mut(&mut self) -> &mut Entry<K, V> {
         match self.left {
             Some(ref mut entry) => entry.smallest_mut(),
-            None => self,
+            None => &mut self.entry,
         }
     }
     /// returns a reference to the largest entry
     pub fn largest(&self) -> &Entry<K, V> {
         match self.left {
             Some(ref entry) => entry.largest(),
-            None => self,
+            None => &self.entry,
         }
     }
 
@@ -161,7 +162,7 @@ where
     pub fn largest_mut(&mut self) -> &mut Entry<K, V> {
         match self.left {
             Some(ref mut entry) => entry.largest_mut(),
-            None => self,
+            None => &mut self.entry,
         }
     }
 }

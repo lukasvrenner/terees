@@ -1,12 +1,13 @@
 //! a binary search tree with keys and values
 //! note: this tree makes no attempts to maintain balance
 
-use super::entry::Entry;
+use super::node::Node;
+use crate::entry::Entry;
 pub struct BsTreeMap<K, V>
 where
     K: Ord,
 {
-    head: Option<Box<Entry<K, V>>>,
+    head: Option<Box<Node<K, V>>>,
     size: usize,
 }
 
@@ -32,7 +33,7 @@ where
     /// returns `true` if `self` contains an entry with key `key`
     /// otherwise returns `false`
     #[inline]
-    pub fn contains(&self, key: K) -> bool {
+    pub fn contains(&self, key: &K) -> bool {
         match self.head {
             Some(ref entry) => entry.contains(key),
             None => false,
@@ -40,13 +41,13 @@ where
     }
 
     /// merges `other` with `self`
-    pub fn extend(&mut self, other: BsTreeMap<K, V>) {
+    pub fn merge(&mut self, other: BsTreeMap<K, V>) {
         self.size += other.size;
         todo!();
     }
 
     /// removes the entry with the given key
-    pub fn remove(&mut self, key: K) {
+    pub fn remove(&mut self, key: &K) {
         if let Some(ref mut entry) = self.head {
             self.size -= 1;
             todo!();
@@ -59,7 +60,7 @@ where
     pub fn insert(&mut self, key: K, value: V) {
         match self.head {
             Some(ref mut entry) => entry.insert(key, value),
-            None => self.head = Some(Box::from(Entry::new(key, value))),
+            None => self.head = Some(Box::from(Node::new(key, value))),
         }
         self.size += 1;
     }
@@ -114,11 +115,11 @@ where
     }
 }
 
-impl<K, V> From<Entry<K, V>> for BsTreeMap<K, V>
+impl<K, V> From<Node<K, V>> for BsTreeMap<K, V>
 where
     K: Ord,
 {
-    fn from(value: Entry<K, V>) -> Self {
+    fn from(value: Node<K, V>) -> Self {
         let size = value.size();
         BsTreeMap {
             head: Some(Box::from(value)),
