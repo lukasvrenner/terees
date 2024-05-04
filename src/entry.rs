@@ -1,13 +1,14 @@
 //! an entry structure for maps
+
 #[derive(Debug, PartialEq)]
 pub struct Entry<K, V> {
     key: K,
-    value: V,
+    value: Box<V>,
 }
 
 impl<K, V> Entry<K, V> {
-    pub const fn new(key: K, value: V) -> Entry<K, V> {
-        Entry { key, value }
+    pub fn new(key: K, value: V) -> Entry<K, V> {
+        Entry { key, value: Box::from(value) }
     }
 
     /// returns a reference to the entry's key
