@@ -7,7 +7,7 @@ pub struct BsTreeMap<K, V>
 where
     K: Ord,
 {
-    head: Option<Box<Node<K, V>>>,
+    root: Option<Box<Node<K, V>>>,
     size: usize,
 }
 
@@ -19,7 +19,7 @@ where
     #[inline]
     pub const fn new() -> BsTreeMap<K, V> {
         BsTreeMap {
-            head: None,
+            root: None,
             size: 0,
         }
     }
@@ -34,7 +34,7 @@ where
     /// otherwise returns `false`
     #[inline]
     pub fn contains(&self, key: &K) -> bool {
-        match self.head {
+        match self.root {
             Some(ref node) => node.contains(key),
             None => false,
         }
@@ -48,7 +48,7 @@ where
 
     /// removes the node with the given key
     pub fn remove(&mut self, key: &K) {
-        if let Some(ref mut node) = self.head {
+        if let Some(ref mut node) = self.root {
             todo!();
         }
     }
@@ -57,28 +57,28 @@ where
     /// if `key` already exists, the value is overridden
     #[inline]
     pub fn insert(&mut self, key: K, value: V) {
-        match self.head {
+        match self.root {
             Some(ref mut node) => {
                 if node.insert(key, value) {
                     self.size += 1;
                 }
             }
             None => {
-                self.head = Some(Box::from(Node::new(key, value)));
+                self.root = Some(Box::from(Node::new(key, value)));
                 self.size += 1;
             }
         }
     }
 
     pub fn try_insert(&mut self, key: K, value: V) {
-        match self.head {
+        match self.root {
             Some(ref mut node) => {
                 if node.try_insert(key, value) {
                     self.size += 1;
                 }
             }
             None => {
-                self.head = Some(Box::from(Node::new(key, value)));
+                self.root = Some(Box::from(Node::new(key, value)));
                 self.size += 1;
             }
         }
@@ -87,7 +87,7 @@ where
     /// returns an optional reference to the `value` with key `key`
     #[inline]
     pub fn get(&self, key: &K) -> Option<&V> {
-        match self.head {
+        match self.root {
             Some(ref node) => node.get(key),
             None => None,
         }
@@ -95,7 +95,7 @@ where
 
     /// returns an optional mutable reference to the `value` with key `key`
     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
-        match self.head {
+        match self.root {
             Some(ref mut node) => node.get_mut(key),
             None => None,
         }
@@ -103,7 +103,7 @@ where
 
     /// returns an optional reference to the smallest node
     pub fn smallest(&self) -> Option<&Entry<K, V>> {
-        match self.head {
+        match self.root {
             Some(ref node) => Some(node.smallest()),
             None => None,
         }
@@ -111,7 +111,7 @@ where
 
     /// returns an optional mutable reference to the smallest node
     pub fn smallest_mut(&mut self) -> Option<&mut Entry<K, V>> {
-        match self.head {
+        match self.root {
             Some(ref mut node) => Some(node.smallest_mut()),
             None => None,
         }
@@ -119,7 +119,7 @@ where
 
     /// returns an optional reference to the largest node
     pub fn largest(&self) -> Option<&Entry<K, V>> {
-        match self.head {
+        match self.root {
             Some(ref node) => Some(node.largest()),
             None => None,
         }
@@ -127,21 +127,21 @@ where
 
     /// returns an optional mutable reference to the largest node
     pub fn largest_mut(&mut self) -> Option<&mut Entry<K, V>> {
-        match self.head {
+        match self.root {
             Some(ref mut node) => Some(node.largest_mut()),
             None => None,
         }
     }
 
     pub fn entry(&self, key: &K) -> Option<&Entry<K, V>> {
-        match self.head {
+        match self.root {
             Some(ref node) => node.entry(key),
             None => None,
         }
     }
 
     pub fn node_mut(&mut self, key: &K) -> Option<&mut Entry<K, V>> {
-        match self.head {
+        match self.root {
             Some(ref mut node) => node.entry_mut(key),
             None => None,
         }
@@ -155,7 +155,7 @@ where
     fn from(value: Node<K, V>) -> Self {
         let size = value.size();
         BsTreeMap {
-            head: Some(Box::from(value)),
+            root: Some(Box::from(value)),
             size,
         }
     }
