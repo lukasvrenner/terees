@@ -1,8 +1,8 @@
 //! a binary search tree with keys but no associated value
 //! a degenerate form of `BsTreeMap`
 
-use crate::entry::Entry;
 use super::{map::BsTreeMap, node::Node};
+use crate::entry::Entry;
 pub struct BsTreeSet<T>
 where
     T: Ord,
@@ -21,7 +21,7 @@ where
     }
 
     /// inserts a new entry with key `key`
-    /// if such an 
+    /// if such an
     pub fn insert(&mut self, key: K) {
         self.map.insert(key, ());
     }

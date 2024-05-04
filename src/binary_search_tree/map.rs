@@ -30,12 +30,12 @@ where
         self.size
     }
 
-    /// returns `true` if `self` contains an entry with key `key`
+    /// returns `true` if `self` contains an node with key `key`
     /// otherwise returns `false`
     #[inline]
     pub fn contains(&self, key: &K) -> bool {
         match self.head {
-            Some(ref entry) => entry.contains(key),
+            Some(ref node) => node.contains(key),
             None => false,
         }
     }
@@ -46,9 +46,9 @@ where
         todo!();
     }
 
-    /// removes the entry with the given key
+    /// removes the node with the given key
     pub fn remove(&mut self, key: &K) {
-        if let Some(ref mut entry) = self.head {
+        if let Some(ref mut node) = self.head {
             self.size -= 1;
             todo!();
         }
@@ -59,19 +59,23 @@ where
     #[inline]
     pub fn insert(&mut self, key: K, value: V) {
         match self.head {
-            Some(ref mut entry) => entry.insert(key, value),
-            None => self.head = Some(Box::from(Node::new(key, value))),
+            Some(ref mut node) => {
+                if node.insert(key, value) {
+                    self.size += 1;
+                }
+            }
+            None => {
+                self.head = Some(Box::from(Node::new(key, value)));
+                self.size += 1;
+            }
         }
-
-        // TODO -- we only want to add if a *new* key was added
-        self.size += 1; // bad
     }
 
     /// returns an optional reference to the `value` with key `key`
     #[inline]
     pub fn get(&self, key: &K) -> Option<&V> {
         match self.head {
-            Some(ref entry) => entry.get(key),
+            Some(ref node) => node.get(key),
             None => None,
         }
     }
@@ -79,53 +83,53 @@ where
     /// returns an optional mutable reference to the `value` with key `key`
     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
         match self.head {
-            Some(ref mut entry) => entry.get_mut(key),
+            Some(ref mut node) => node.get_mut(key),
             None => None,
         }
     }
 
-    /// returns an optional reference to the smallest entry
+    /// returns an optional reference to the smallest node
     pub fn smallest(&self) -> Option<&Entry<K, V>> {
         match self.head {
-            Some(ref entry) => Some(entry.smallest()),
+            Some(ref node) => Some(node.smallest()),
             None => None,
         }
     }
 
-    /// returns an optional mutable reference to the smallest entry
+    /// returns an optional mutable reference to the smallest node
     pub fn smallest_mut(&mut self) -> Option<&mut Entry<K, V>> {
         match self.head {
-            Some(ref mut entry) => Some(entry.smallest_mut()),
+            Some(ref mut node) => Some(node.smallest_mut()),
             None => None,
         }
     }
 
-    /// returns an optional reference to the largest entry
+    /// returns an optional reference to the largest node
     pub fn largest(&self) -> Option<&Entry<K, V>> {
         match self.head {
-            Some(ref entry) => Some(entry.largest()),
+            Some(ref node) => Some(node.largest()),
             None => None,
         }
     }
 
-    /// returns an optional mutable reference to the largest entry
+    /// returns an optional mutable reference to the largest node
     pub fn largest_mut(&mut self) -> Option<&mut Entry<K, V>> {
         match self.head {
-            Some(ref mut entry) => Some(entry.largest_mut()),
+            Some(ref mut node) => Some(node.largest_mut()),
             None => None,
         }
     }
 
-    pub fn entry(&self, key: &K) -> Option<&Entry<K, V>> {
+    pub fn node(&self, key: &K) -> Option<&Entry<K, V>> {
         match self.head {
-            Some(ref entry) => entry.entry(key),
+            Some(ref node) => node.entry(key),
             None => None,
         }
     }
 
-    pub fn entry_mut(&mut self, key: &K) -> Option<&mut Entry<K, V>> {
+    pub fn node_mut(&mut self, key: &K) -> Option<&mut Entry<K, V>> {
         match self.head {
-            Some(ref mut entry) => entry.entry_mut(key),
+            Some(ref mut node) => node.entry_mut(key),
             None => None,
         }
     }
@@ -170,7 +174,7 @@ mod tests {
     }
 
     #[test]
-    fn add() {
+    fn insert() {
         let mut tree = BsTreeMap::new();
         tree.insert(5, " , ");
         tree.insert(3, "hello");
@@ -179,11 +183,10 @@ mod tests {
         tree.insert(7, "hii");
 
         assert_eq!(tree.size(), 4);
-        assert_eq!(tree.get(&7), Some(&"haha get replaced"));
+        assert_eq!(tree.get(&7), Some(&"hii"));
         assert_eq!(tree.get(&8), None);
     }
 
     #[test]
-    fn contains() {
-    }
+    fn contains() {}
 }

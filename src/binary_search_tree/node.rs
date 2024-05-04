@@ -59,17 +59,28 @@ where
 
     /// sets the value of the key with key `key` to `value`
     /// if `key` already exists, the value is overridden
-    pub fn insert(&mut self, key: K, value: V) {
+    /// returns `true` if a new node is added
+    /// else returns `false`
+    pub fn insert(&mut self, key: K, value: V) -> bool {
         match key.cmp(self.entry.key()) {
             Ordering::Less => match self.left {
                 Some(ref mut node) => node.insert(key, value),
-                None => self.left = Some(Box::from(Node::new(key, value))),
+                None => {
+                    self.left = Some(Box::from(Node::new(key, value)));
+                    return true;
+                }
             },
             Ordering::Greater => match self.right {
                 Some(ref mut node) => node.insert(key, value),
-                None => self.right = Some(Box::from(Node::new(key, value))),
+                None => {
+                    self.right = Some(Box::from(Node::new(key, value)));
+                    return true;
+                }
             },
-            Ordering::Equal => *self.entry.value_mut() = value,
+            Ordering::Equal => {
+                *self.entry.value_mut() = value;
+                false
+            }
         }
     }
 
