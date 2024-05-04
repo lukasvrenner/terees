@@ -1,7 +1,7 @@
 //! a binary search tree with keys and values
 //! note: this tree makes no attempts to maintain balance
 
-use super::node::Node;
+use super::{node::Node, RemoveableNode};
 use crate::entry::Entry;
 pub struct BsTreeMap<K, V>
 where
@@ -47,10 +47,12 @@ where
     }
 
     /// removes the node with the given key
-    pub fn remove(&mut self, key: &K) {
-        if let Some(ref mut node) = self.root {
-            todo!();
+    pub fn remove(&mut self, key: &K) -> bool {
+        let removed = self.root.remove(key);
+        if removed {
+            self.size -= 1;
         }
+        removed
     }
 
     /// sets the value of the key with key `key` to `value`
