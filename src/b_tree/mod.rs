@@ -1,3 +1,3 @@
 pub mod map;
-pub mod set;
 mod node;
+pub mod set;
