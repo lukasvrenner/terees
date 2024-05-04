@@ -164,7 +164,7 @@ where
     }
     /// returns a reference to the largest entry
     pub fn largest(&self) -> &Entry<K, V> {
-        match self.left {
+        match self.right {
             Some(ref entry) => entry.largest(),
             None => &self.entry,
         }

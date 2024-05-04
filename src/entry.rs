@@ -1,4 +1,5 @@
 //! an entry structure for maps
+#[derive(Debug, PartialEq)]
 pub struct Entry<K, V> {
     key: K,
     value: V,

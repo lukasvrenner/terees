@@ -120,7 +120,7 @@ where
         }
     }
 
-    pub fn node(&self, key: &K) -> Option<&Entry<K, V>> {
+    pub fn entry(&self, key: &K) -> Option<&Entry<K, V>> {
         match self.head {
             Some(ref node) => node.entry(key),
             None => None,
@@ -161,13 +161,14 @@ where
 mod tests {
     use super::*;
 
+    // set up a tree to apply tests to
     fn basic_tree() -> BsTreeMap<usize, String> {
         let mut tree = BsTreeMap::new();
         tree.insert(5, " , ".to_string());
         tree.insert(3, "hello".to_string());
         tree.insert(6, "world".to_string());
-        tree.insert(7, "this is a string!".to_string());
-        tree.insert(1, "this is value has a key of 1".to_string());
+        tree.insert(7, "this is the largest entry".to_string());
+        tree.insert(1, "this is the smallest entry".to_string());
         tree.insert(4, "hmmm".to_string());
 
         tree
@@ -188,5 +189,43 @@ mod tests {
     }
 
     #[test]
-    fn contains() {}
+    fn remove() {
+        let mut tree = basic_tree();
+        tree.remove(&5); // test root node
+        assert!(!tree.contains(&5));
+
+        tree.remove(&3); // check non-leaf node
+        assert!(!tree.contains(&3));
+
+        tree.remove(&4); // check leaf node
+        assert!(!tree.contains(&4));
+
+        assert_eq!(tree.size(), 3);
+    }
+
+    #[test]
+    fn contains() {
+        let tree = basic_tree();
+        assert!(tree.contains(&5)); // check root node
+        assert!(tree.contains(&4));
+        assert!(!tree.contains(&0));
+    }
+
+    #[test]
+    fn smallest() {
+        let tree = basic_tree();
+        assert_eq!(
+            tree.smallest(),
+            Some(&Entry::new(1, "this is the smallest entry".to_string()))
+        );
+    }
+
+    #[test]
+    fn largest() {
+        let tree = basic_tree();
+        assert_eq!(
+            tree.largest(),
+            Some(&Entry::new(7, "this is the largest entry".to_string()))
+        );
+    }
 }
