@@ -8,7 +8,10 @@ pub struct Entry<K, V> {
 
 impl<K, V> Entry<K, V> {
     pub fn new(key: K, value: V) -> Entry<K, V> {
-        Entry { key, value: Box::from(value) }
+        Entry {
+            key,
+            value: Box::from(value),
+        }
     }
 
     /// returns a reference to the entry's key
