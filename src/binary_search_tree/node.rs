@@ -67,14 +67,14 @@ where
                 Some(ref mut node) => node.insert(key, value),
                 None => {
                     self.left = Some(Box::from(Node::new(key, value)));
-                    return true;
+                    true
                 }
             },
             Ordering::Greater => match self.right {
                 Some(ref mut node) => node.insert(key, value),
                 None => {
                     self.right = Some(Box::from(Node::new(key, value)));
-                    return true;
+                    true
                 }
             },
             Ordering::Equal => {
