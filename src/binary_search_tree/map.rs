@@ -49,7 +49,6 @@ where
     /// removes the node with the given key
     pub fn remove(&mut self, key: &K) {
         if let Some(ref mut node) = self.head {
-            self.size -= 1;
             todo!();
         }
     }
@@ -61,6 +60,20 @@ where
         match self.head {
             Some(ref mut node) => {
                 if node.insert(key, value) {
+                    self.size += 1;
+                }
+            }
+            None => {
+                self.head = Some(Box::from(Node::new(key, value)));
+                self.size += 1;
+            }
+        }
+    }
+
+    pub fn try_insert(&mut self, key: K, value: V) {
+        match self.head {
+            Some(ref mut node) => {
+                if node.try_insert(key, value) {
                     self.size += 1;
                 }
             }
@@ -162,14 +175,14 @@ mod tests {
     use super::*;
 
     // set up a tree to apply tests to
-    fn basic_tree() -> BsTreeMap<usize, String> {
+    fn basic_tree() -> BsTreeMap<usize, &'static str> {
         let mut tree = BsTreeMap::new();
-        tree.insert(5, " , ".to_string());
-        tree.insert(3, "hello".to_string());
-        tree.insert(6, "world".to_string());
-        tree.insert(7, "this is the largest entry".to_string());
-        tree.insert(1, "this is the smallest entry".to_string());
-        tree.insert(4, "hmmm".to_string());
+        tree.insert(5, " , ");
+        tree.insert(3, "hello");
+        tree.insert(6, "world");
+        tree.insert(7, "this is the largest entry");
+        tree.insert(1, "this is the smallest entry");
+        tree.insert(4, "hmmm");
 
         tree
     }
@@ -186,6 +199,14 @@ mod tests {
         assert_eq!(tree.size(), 4);
         assert_eq!(tree.get(&7), Some(&"hii"));
         assert_eq!(tree.get(&8), None);
+    }
+
+    #[test]
+    fn try_insert() {
+        let mut tree = basic_tree();
+        tree.try_insert(7, "already exists!");
+        assert_eq!(tree.size(), 6);
+        tree.try_insert(9, "does not exist yet");
     }
 
     #[test]
@@ -216,7 +237,7 @@ mod tests {
         let tree = basic_tree();
         assert_eq!(
             tree.smallest(),
-            Some(&Entry::new(1, "this is the smallest entry".to_string()))
+            Some(&Entry::new(1, "this is the smallest entry"))
         );
     }
 
@@ -225,7 +246,7 @@ mod tests {
         let tree = basic_tree();
         assert_eq!(
             tree.largest(),
-            Some(&Entry::new(7, "this is the largest entry".to_string()))
+            Some(&Entry::new(7, "this is the largest entry"))
         );
     }
 }
