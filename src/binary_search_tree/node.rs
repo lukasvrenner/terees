@@ -1,5 +1,4 @@
 //! an node in `BsTreeMap`
-use super::RemoveableNode;
 use crate::entry::Entry;
 use std::cmp::Ordering;
 
@@ -8,16 +7,11 @@ use std::cmp::Ordering;
 pub struct Node<K, V>
 where
     K: Ord,
+    V: ?Sized,
 {
     entry: Entry<K, V>,
     left: Option<Box<Node<K, V>>>,
     right: Option<Box<Node<K, V>>>,
-}
-
-#[derive(Debug)]
-pub enum RemoveError {
-    DoesNotExist,
-    RemoveMeIsRoot,
 }
 
 impl<K, V> Node<K, V>
@@ -247,74 +241,5 @@ where
             Some(ref mut entry) => entry.largest_mut(),
             None => &mut self.entry,
         }
-    }
-}
-
-impl<K, V> RemoveableNode<K> for Option<Box<Node<K, V>>>
-where
-    K: Ord,
-{
-    fn remove(&mut self, key: &K) -> bool {
-        if let Some(ref mut node) = self {
-            match key.cmp(node.key()) {
-                Ordering::Less => return node.left.remove(key),
-                Ordering::Greater => return node.right.remove(key),
-                Ordering::Equal => {
-                    if let Some(ref mut smaller_node) = node.left {
-                        let parent = smaller_node;
-                        loop {
-                            match parent.right {
-                                Some(ref mut larger_node) => {
-                                    if larger_node.right.is_none() {
-                                        std::mem::swap(
-                                            &mut node.entry,
-                                            &mut larger_node.entry,
-                                        );
-                                        parent.right = larger_node.left.take();
-                                        break;
-                                    }
-                                }
-                                None => {
-                                    std::mem::swap(
-                                        &mut node.entry,
-                                        &mut parent.entry,
-                                    );
-                                    parent.right = None;
-                                    break;
-                                }
-                            }
-                        }
-                    } else if let Some(ref mut larger_node) = node.right {
-                        let parent = larger_node;
-                        loop {
-                            match parent.left {
-                                Some(ref mut smaller_node) => {
-                                    if smaller_node.right.is_none() {
-                                        std::mem::swap(
-                                            &mut node.entry,
-                                            &mut smaller_node.entry,
-                                        );
-                                        parent.left = smaller_node.right.take();
-                                        break;
-                                    }
-                                }
-                                None => {
-                                    std::mem::swap(
-                                        &mut node.entry,
-                                        &mut parent.entry,
-                                    );
-                                    parent.left = None;
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        *self = None;
-                    }
-                    return true;
-                }
-            };
-        }
-        false
     }
 }

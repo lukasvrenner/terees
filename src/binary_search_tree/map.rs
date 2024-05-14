@@ -1,11 +1,13 @@
 //! a binary search tree with keys and values
 //! note: this tree makes no attempts to maintain balance
 
-use super::{node::Node, RemoveableNode};
+use std::cmp::Ordering;
+use super::node::Node;
 use crate::entry::Entry;
 pub struct BsTreeMap<K, V>
 where
     K: Ord,
+    V: ?Sized,
 {
     root: Option<Box<Node<K, V>>>,
     size: usize,
@@ -48,11 +50,7 @@ where
 
     /// removes the node with the given key
     pub fn remove(&mut self, key: &K) -> bool {
-        let removed = self.root.remove(key);
-        if removed {
-            self.size -= 1;
-        }
-        removed
+        todo!();
     }
 
     /// sets the value of the key with key `key` to `value`
@@ -216,14 +214,17 @@ mod tests {
         let mut tree = basic_tree();
         tree.remove(&5); // test root node
         assert!(!tree.contains(&5));
+        assert_eq!(tree.size(), 5);
 
         tree.remove(&3); // check non-leaf node
         assert!(!tree.contains(&3));
+        assert_eq!(tree.size(), 4);
 
         tree.remove(&4); // check leaf node
         assert!(!tree.contains(&4));
 
         assert_eq!(tree.size(), 3);
+        assert_eq!(tree.root.as_ref().unwrap().size(), tree.size());
     }
 
     #[test]
