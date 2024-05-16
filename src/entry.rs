@@ -3,7 +3,7 @@
 #[derive(Debug, PartialEq)]
 pub struct Entry<K, V: ?Sized> {
     key: K,
-    value: Box<V>,
+    pub value: Box<V>,
 }
 
 impl<K, V> Entry<K, V> {
@@ -17,15 +17,5 @@ impl<K, V> Entry<K, V> {
     /// returns a reference to the entry's key
     pub fn key(&self) -> &K {
         &self.key
-    }
-
-    /// returns a reference to the entry's value
-    pub fn value(&self) -> &V {
-        &self.value
-    }
-
-    /// returns a mutable reference to the entry's value
-    pub fn value_mut(&mut self) -> &mut V {
-        &mut self.value
     }
 }

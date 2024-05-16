@@ -10,8 +10,8 @@ where
     V: ?Sized,
 {
     entry: Entry<K, V>,
-    left: Option<Box<Node<K, V>>>,
-    right: Option<Box<Node<K, V>>>,
+    pub left: Option<Box<Node<K, V>>>,
+    pub right: Option<Box<Node<K, V>>>,
 }
 
 impl<K, V> Node<K, V>
@@ -30,7 +30,7 @@ where
 
     /// returns an optional reference to the `value` with key `key`
     pub fn get(&self, key: &K) -> Option<&V> {
-        match key.cmp(self.entry.key()) {
+        match key.cmp(self.key()) {
             Ordering::Less => match self.left {
                 Some(ref node) => node.get(key),
                 None => None,
@@ -39,28 +39,8 @@ where
                 Some(ref node) => node.get(key),
                 None => None,
             },
-            Ordering::Equal => Some(self.entry.value()),
+            Ordering::Equal => Some(&self.entry.value),
         }
-    }
-
-    /// returns an optional reference to the right node
-    pub fn left(&self) -> Option<&Node<K, V>> {
-        self.left.as_deref()
-    }
-
-    /// returns an optional mutable reference to the left node
-    pub fn left_mut(&mut self) -> Option<&mut Node<K, V>> {
-        self.left.as_deref_mut()
-    }
-
-    /// returns an optional reference to right node
-    pub fn right(&self) -> Option<&Node<K, V>> {
-        self.right.as_deref()
-    }
-
-    /// returns an optional mutable reference to the right node
-    pub fn right_mut(&mut self) -> Option<&mut Node<K, V>> {
-        self.right.as_deref_mut()
     }
 
     /// returns a reference to the key
@@ -70,17 +50,17 @@ where
 
     /// returns a reference to the value
     pub fn value(&self) -> &V {
-        self.entry.value()
+        &self.entry.value
     }
 
     /// returns a mutable reference to the value
     pub fn value_mut(&mut self) -> &mut V {
-        self.entry.value_mut()
+        &mut self.entry.value
     }
 
     /// returns an optional mutable reference to the `value` with key `key`
     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
-        match key.cmp(self.entry.key()) {
+        match key.cmp(self.key()) {
             Ordering::Less => match self.left {
                 Some(ref mut node) => node.get_mut(key),
                 None => None,
@@ -89,7 +69,7 @@ where
                 Some(ref mut node) => node.get_mut(key),
                 None => None,
             },
-            Ordering::Equal => Some(self.entry.value_mut()),
+            Ordering::Equal => Some(&mut self.entry.value),
         }
     }
 
@@ -115,7 +95,7 @@ where
                 }
             },
             Ordering::Equal => {
-                *self.entry.value_mut() = value;
+                *self.entry.value = value;
                 false
             }
         }
