@@ -1,7 +1,7 @@
 //! an entry structure for maps
 
 #[derive(Debug, PartialEq)]
-pub struct Entry<K, V> {
+pub struct Entry<K, V: ?Sized> {
     key: K,
     value: Box<V>,
 }
