@@ -1,3 +1,4 @@
+use std::ops::{Index, IndexMut};
 mod iter;
 mod node;
 use node::Node;
@@ -175,6 +176,19 @@ impl<T> From<Node<T>> for LinkedList<T> {
 impl<T> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl<T> Index<usize> for LinkedList<T> {
+    type Output = T;
+    fn index(&self, index: usize) -> &Self::Output {
+        self.head.as_ref().unwrap().get(index).unwrap()
+    }
+}
+
+impl<T> IndexMut<usize> for LinkedList<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        self.head.as_mut().unwrap().get_mut(index).unwrap()
     }
 }
 
