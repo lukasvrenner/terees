@@ -137,16 +137,17 @@ where
 
     /// removes the node containing `value`
     /// note: does not consider the first node
-    pub fn remove(&mut self, value: T) {
+    pub fn remove(&mut self, value: T) -> bool {
         match &mut self.next {
             Some(node) => {
                 if node.value == value {
                     self.next = node.next.take();
+                    true
                 } else {
-                    node.remove(value);
+                    node.remove(value)
                 }
             }
-            None => (),
+            None => false,
         }
     }
 }

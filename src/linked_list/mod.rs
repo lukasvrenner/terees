@@ -144,13 +144,23 @@ where
 
     /// removes the node with value `value` from the list
     #[inline]
-    pub fn remove(&mut self, value: T) {
-        if let Some(ref mut node) = self.head {
-            self.len -= 1;
-            if self.len == 0 {
-                return self.head = node.next.take();
-            }
-            node.remove(value);
+    pub fn remove(&mut self, value: T) -> bool {
+        match self.head {
+            Some(ref mut node) => {
+                if node.value == value {
+                    self.head = node.next.take();
+                    self.len -= 1;
+                    return true;
+                }
+                match node.remove(value) {
+                    true => {
+                        self.len -= 1;
+                        true
+                    },
+                    false => false,
+                }
+            },
+            None => false,
         }
     }
 
